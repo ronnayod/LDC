@@ -122,6 +122,11 @@ type ModalMode = "closed" | "add" | "edit" | "view" | "delete";
 
 export default function PatientsPage() {
   // ─── State ────────────────────────────────────────────
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [patients, setPatients] = useState<Patient[]>(initialPatients);
   const [activeTab, setActiveTab] = useState("รายชื่อ");
   const [search, setSearch] = useState("");
@@ -304,6 +309,10 @@ export default function PatientsPage() {
   };
 
   // ─── Render ───────────────────────────────────────────
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div className="space-y-6">
       {/* ═══ Header ═══ */}

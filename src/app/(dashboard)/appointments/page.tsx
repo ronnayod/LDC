@@ -92,6 +92,11 @@ type ViewMode = "calendar" | "table";
 
 export default function AppointmentsPage() {
   // ─── State ────────────────────────────────────────────
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
   const [viewMode, setViewMode] = useState<ViewMode>("calendar");
   const [search, setSearch] = useState("");
@@ -350,6 +355,10 @@ export default function AppointmentsPage() {
   while (calendarCells.length % 7 !== 0) calendarCells.push(null);
 
   // ─── Render ───────────────────────────────────────────
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div className="space-y-6">
       {/* ═══ Header ═══ */}

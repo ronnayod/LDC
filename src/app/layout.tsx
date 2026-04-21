@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "LDC Dental Clinic — ระบบจัดการคลินิกทันตกรรม",
-  description: "ระบบ CRM สำหรับจัดการคลินิกทันตกรรม LDC — จัดการคนไข้ นัดหมาย รักษา บัญชี และอื่นๆ",
+  title: "Lunithic Mockup — ระบบจัดการคลินิกทันตกรรม",
+  description: "ระบบ CRM สำหรับจัดการคลินิกทันตกรรม Lunithic Mockup  — จัดการคนไข้ นัดหมาย รักษา บัญชี และอื่นๆ",
 };
 
 export default function RootLayout({

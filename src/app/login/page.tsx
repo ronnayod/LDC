@@ -52,7 +52,7 @@ export default function LoginPage() {
                 <path d="M12 2C10.5 2 9.2 2.7 8.5 3.8C7.5 3.3 6.3 3.5 5.5 4.3C4.7 5.1 4.5 6.3 5 7.3C3.9 8 3 9.3 3 10.8C3 12.3 3.9 13.6 5.2 14.3L7 22H10L11 16H13L14 22H17L18.8 14.3C20.1 13.6 21 12.3 21 10.8C21 9.3 20.1 8 19 7.3C19.5 6.3 19.3 5.1 18.5 4.3C17.7 3.5 16.5 3.3 15.5 3.8C14.8 2.7 13.5 2 12 2Z" fill="white" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-[#1E293B] tracking-tight">LDC Dental</h1>
+            <h1 className="text-2xl font-bold text-[#1E293B] tracking-tight">Lunithic Mockup</h1>
             <p className="text-sm text-[#64748B] mt-1">ระบบจัดการคลินิกทันตกรรม</p>
           </div>
 
@@ -160,7 +160,7 @@ export default function LoginPage() {
 
           {/* Footer */}
           <p className="text-center text-xs text-[#94A3B8] mt-8">
-            © 2026 LDC Dental Clinic. All rights reserved.
+            © 2026 Lunithic Mockup. All rights reserved.
           </p>
         </div>
       </div>

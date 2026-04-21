@@ -153,7 +153,7 @@ export default function Sidebar() {
             </svg>
           </div>
           <div>
-            <h1 className="text-white font-bold text-lg leading-tight">LDC Dental</h1>
+            <h1 className="text-white font-bold text-lg leading-tight">Lunithic Mockup</h1>
             <p className="text-[#64748B] text-xs">Management System</p>
           </div>
         </div>
@@ -180,11 +180,10 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
-                isActive
-                  ? "bg-gradient-to-r from-[#00C6FF]/20 to-[#0072FF]/15 text-[#00C6FF] shadow-sm"
-                  : "text-[#94A3B8] hover:text-white hover:bg-white/5"
-              }`}
+              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${isActive
+                ? "bg-gradient-to-r from-[#00C6FF]/20 to-[#0072FF]/15 text-[#00C6FF] shadow-sm"
+                : "text-[#94A3B8] hover:text-white hover:bg-white/5"
+                }`}
             >
               <span className={`flex-shrink-0 transition-colors duration-200 ${isActive ? "text-[#00C6FF]" : "text-[#64748B] group-hover:text-white"}`}>
                 {item.icon}
