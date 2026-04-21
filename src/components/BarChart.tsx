@@ -34,11 +34,6 @@ export default function BarChart({ data, title }: BarChartProps) {
           );
         })}
       </div>
-      <style>{`
-        @keyframes slideInFromLeft {
-          from { width: 0; }
-        }
-      `}</style>
     </div>
   );
 }
