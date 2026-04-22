@@ -329,17 +329,17 @@ export default function DentistSchedulePage() {
         prev.map((s) =>
           s.id === selectedSchedule.id
             ? {
-                ...s,
-                dentistId: formData.dentistId,
-                dentistName: dentist.name,
-                room: formData.room,
-                dayOfWeek: formData.selectedDays[0],
-                timeStart: formData.timeStart,
-                timeEnd: formData.timeEnd,
-                month: formData.month,
-                year: formData.year,
-                color: roomColor,
-              }
+              ...s,
+              dentistId: formData.dentistId,
+              dentistName: dentist.name,
+              room: formData.room,
+              dayOfWeek: formData.selectedDays[0],
+              timeStart: formData.timeStart,
+              timeEnd: formData.timeEnd,
+              month: formData.month,
+              year: formData.year,
+              color: roomColor,
+            }
             : s
         )
       );
@@ -415,14 +415,14 @@ export default function DentistSchedulePage() {
             className="w-5 h-5 rounded bg-white/90 shadow-sm flex items-center justify-center hover:bg-white transition-colors"
             title="แก้ไข"
           >
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); openDelete(schedule); }}
             className="w-5 h-5 rounded bg-white/90 shadow-sm flex items-center justify-center hover:bg-red-50 transition-colors"
             title="ลบ"
           >
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
           </button>
         </div>
       </div>
@@ -447,7 +447,7 @@ export default function DentistSchedulePage() {
           onClick={() => openAdd()}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white font-semibold text-sm shadow-lg shadow-[#0072FF]/20 hover:shadow-xl hover:brightness-110 active:scale-[0.98] transition-all duration-200"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
           วันลงตรวจ
         </button>
       </div>
@@ -456,13 +456,13 @@ export default function DentistSchedulePage() {
       <div className="flex flex-wrap items-center gap-3 animate-fade-in">
         {/* Search */}
         <div className="relative flex-1 min-w-[240px] max-w-sm">
-          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
           <input
             id="input-search-schedule"
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="ค้นหาทันตแพทย์ หรือ ห้อง..."
+            placeholder="ค้นหาชื่อทันตแพทย์"
             className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#E2E8F0] text-sm text-[#1E293B] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00C6FF]/30 focus:border-[#00C6FF] transition-all"
           />
         </div>
@@ -478,10 +478,10 @@ export default function DentistSchedulePage() {
         {/* Navigation */}
         <div className="flex items-center gap-1">
           <button onClick={goPrev} className="p-2.5 rounded-xl border border-[#E2E8F0] bg-white hover:bg-[#F1F5F9] transition-all" title="ก่อนหน้า">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
           </button>
           <button onClick={goNext} className="p-2.5 rounded-xl border border-[#E2E8F0] bg-white hover:bg-[#F1F5F9] transition-all" title="ถัดไป">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
           </button>
         </div>
 
@@ -726,14 +726,14 @@ export default function DentistSchedulePage() {
                   onClick={() => openView(s)}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#475569] hover:bg-[#F1F5F9] hover:text-[#0072FF] transition-colors"
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                   รายละเอียด
                 </button>
                 <button
                   onClick={() => openEdit(s)}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#475569] hover:bg-[#F1F5F9] hover:text-[#0072FF] transition-colors"
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
                   แก้ไข
                 </button>
                 <div className="border-t border-[#F1F5F9] my-1" />
@@ -741,7 +741,7 @@ export default function DentistSchedulePage() {
                   onClick={() => openDelete(s)}
                   className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
                   ลบ
                 </button>
               </>
@@ -760,14 +760,14 @@ export default function DentistSchedulePage() {
           <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl mx-4" style={{ animation: "modal-pop 0.25s ease-out" }}>
             <div className="flex justify-center mb-5">
               <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></svg>
               </div>
             </div>
             <h3 className="text-xl font-bold text-[#1E293B] text-center mb-2">ยืนยันการลบตารางลงตรวจ?</h3>
             <p className="text-sm text-[#64748B] text-center mb-8">
-              คุณแน่ใจหรือไม่ว่าต้องการลบตารางของ<br/>
-              <span className="font-semibold text-[#1E293B]">{selectedSchedule.dentistName}</span><br/>
-              วัน{THAI_DAYS_FULL[selectedSchedule.dayOfWeek]} เวลา {selectedSchedule.timeStart} - {selectedSchedule.timeEnd} ห้อง {selectedSchedule.room}<br/>
+              คุณแน่ใจหรือไม่ว่าต้องการลบตารางของ<br />
+              <span className="font-semibold text-[#1E293B]">{selectedSchedule.dentistName}</span><br />
+              วัน{THAI_DAYS_FULL[selectedSchedule.dayOfWeek]} เวลา {selectedSchedule.timeStart} - {selectedSchedule.timeEnd} ห้อง {selectedSchedule.room}<br />
               <span className="text-red-400 text-xs mt-2 block">การดำเนินการนี้ไม่สามารถย้อนกลับได้</span>
             </p>
             <div className="flex gap-3">
@@ -786,7 +786,7 @@ export default function DentistSchedulePage() {
             <div className="flex items-center justify-between px-8 py-5 border-b border-[#E2E8F0] flex-shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ backgroundColor: selectedSchedule.color + "20" }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={selectedSchedule.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={selectedSchedule.color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-[#1E293B]">รายละเอียดตารางลงตรวจ</h3>
@@ -794,7 +794,7 @@ export default function DentistSchedulePage() {
                 </div>
               </div>
               <button onClick={() => { setModalMode("closed"); setSelectedSchedule(null); }} className="p-2 rounded-lg hover:bg-[#F1F5F9] transition-colors">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
             </div>
             {/* Body */}
@@ -810,7 +810,7 @@ export default function DentistSchedulePage() {
             {/* Footer */}
             <div className="flex justify-end gap-3 px-8 py-5 border-t border-[#E2E8F0] flex-shrink-0">
               <button onClick={() => openEdit(selectedSchedule)} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white font-semibold text-sm shadow-lg shadow-[#0072FF]/20 hover:shadow-xl hover:brightness-110 active:scale-[0.98] transition-all duration-200">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
                 แก้ไข
               </button>
             </div>
@@ -826,7 +826,7 @@ export default function DentistSchedulePage() {
             <div className="flex items-center justify-between px-8 py-5 border-b border-[#E2E8F0] flex-shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#00C6FF] to-[#0072FF] flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-[#1E293B]">{modalMode === "add" ? "วันลงตรวจทันตแพทย์" : "แก้ไขตารางลงตรวจ"}</h3>
@@ -834,7 +834,7 @@ export default function DentistSchedulePage() {
                 </div>
               </div>
               <button onClick={() => { setModalMode("closed"); setSelectedSchedule(null); }} className="p-2 rounded-lg hover:bg-[#F1F5F9] transition-colors">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
               </button>
             </div>
 
@@ -909,10 +909,10 @@ export default function DentistSchedulePage() {
                           ${isSelected
                             ? "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white border-transparent shadow-md shadow-[#0072FF]/20 scale-110"
                             : isSunday
-                            ? "border-red-200 text-red-400 hover:bg-red-50 hover:border-red-300"
-                            : isSaturday
-                            ? "border-blue-200 text-blue-400 hover:bg-blue-50 hover:border-blue-300"
-                            : "border-[#E2E8F0] text-[#64748B] hover:bg-[#F1F5F9] hover:border-[#CBD5E1]"
+                              ? "border-red-200 text-red-400 hover:bg-red-50 hover:border-red-300"
+                              : isSaturday
+                                ? "border-blue-200 text-blue-400 hover:bg-blue-50 hover:border-blue-300"
+                                : "border-[#E2E8F0] text-[#64748B] hover:bg-[#F1F5F9] hover:border-[#CBD5E1]"
                           }`}
                       >
                         {dayLabel}
@@ -999,12 +999,12 @@ export default function DentistSchedulePage() {
                 >
                   {saveSuccess ? (
                     <>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                       บันทึกสำเร็จ
                     </>
                   ) : (
                     <>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
                       {modalMode === "add" ? "เพิ่มวันลงตรวจ" : "บันทึก"}
                     </>
                   )}

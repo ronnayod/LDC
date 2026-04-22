@@ -340,11 +340,10 @@ export default function PatientsPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              activeTab === tab
+            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === tab
                 ? "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-sm"
                 : "text-[#64748B] hover:text-[#1E293B] hover:bg-[#F1F5F9]"
-            }`}
+              }`}
           >
             {tab}
           </button>
@@ -364,7 +363,7 @@ export default function PatientsPage() {
             type="text"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-            placeholder="ค้นหาด้วย HN, เลขบัตร ปชช., ชื่อ, เบอร์โทร..."
+            placeholder="ค้นหาด้วย HN, ชื่อ, เบอร์โทร..."
             className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#E2E8F0] text-sm text-[#1E293B] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00C6FF]/30 focus:border-[#00C6FF] transition-all"
           />
         </div>
@@ -525,11 +524,10 @@ export default function PatientsPage() {
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    page === currentPage
+                  className={`w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${page === currentPage
                       ? "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-sm"
                       : "text-[#64748B] hover:bg-[#F1F5F9]"
-                  }`}
+                    }`}
                 >
                   {page}
                 </button>
@@ -831,11 +829,10 @@ export default function PatientsPage() {
                         key={bt}
                         type="button"
                         onClick={() => updateField("bloodType", formData.bloodType === bt ? "" : bt)}
-                        className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-all ${
-                          formData.bloodType === bt
+                        className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-all ${formData.bloodType === bt
                             ? "bg-[#0072FF] text-white border-[#0072FF]"
                             : "bg-white text-[#475569] border-[#E2E8F0] hover:border-[#0072FF]/50"
-                        }`}
+                          }`}
                       >
                         {bt}
                       </button>
@@ -999,11 +996,10 @@ export default function PatientsPage() {
                   id="btn-save-patient"
                   onClick={handleSave}
                   disabled={saveSuccess}
-                  className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg active:scale-[0.98] ${
-                    saveSuccess
+                  className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg active:scale-[0.98] ${saveSuccess
                       ? "bg-green-500 text-white shadow-green-500/20"
                       : "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-[#0072FF]/20 hover:shadow-xl hover:brightness-110"
-                  }`}
+                    }`}
                 >
                   {saveSuccess ? (
                     <>
@@ -1098,7 +1094,6 @@ function InfoItem({ label, value }: { label: string; value: string }) {
 }
 
 function inputClass(error?: boolean) {
-  return `w-full px-3.5 py-2.5 rounded-xl bg-white border text-sm text-[#1E293B] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00C6FF]/30 focus:border-[#00C6FF] transition-all ${
-    error ? "border-red-400 ring-2 ring-red-400/20" : "border-[#E2E8F0]"
-  }`;
+  return `w-full px-3.5 py-2.5 rounded-xl bg-white border text-sm text-[#1E293B] placeholder:text-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#00C6FF]/30 focus:border-[#00C6FF] transition-all ${error ? "border-red-400 ring-2 ring-red-400/20" : "border-[#E2E8F0]"
+    }`;
 }
