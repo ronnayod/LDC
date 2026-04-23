@@ -111,7 +111,6 @@ const initialPatients: Patient[] = [
   { id: "12", hn: "HN-0012", idCard: "1100100100012", prefix: "นาย", firstName: "วีระ", lastName: "พลายงาม", nickname: "ระ", phone: "092-345-6789", email: "", gender: "ชาย", age: 45, dob: "1981-10-12", nationality: "ไทย", bloodType: "O", group: "ทั่วไป", lastVisit: "07/04/2026", isActive: true, allergies: "-", chronicDiseases: "-", surgeryHistory: "-", isADHD: false, isPregnant: false, alcohol: "ดื่มบ้าง", smoking: "ไม่สูบ", facebook: "", lineId: "", houseNo: "852", moo: "4", road: "บางนา-ตราด", soi: "25", subDistrict: "บางนา", district: "บางนา", province: "กรุงเทพมหานคร", postalCode: "10260", referralSource: "เพื่อนแนะนำ", referrerName: "", branch: "ศรีนครินทร์" },
 ];
 
-const tabs = ["รายชื่อ", "ประวัติ", "มัดจำ"];
 const genderOptions = ["ทั้งหมด", "ชาย", "หญิง"];
 const groupOptions = ["ทั้งหมด", "VIP", "ทั่วไป", "นักเรียน", "ผู้สูงอายุ"];
 const prefixOptions = ["นาย", "นาง", "นางสาว", "เด็กชาย", "เด็กหญิง"];
@@ -334,21 +333,7 @@ export default function PatientsPage() {
         </button>
       </div>
 
-      {/* ═══ Tabs ═══ */}
-      <div className="flex gap-1 bg-white rounded-xl p-1 shadow-sm border border-[#E2E8F0] w-fit animate-fade-in">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === tab
-                ? "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-sm"
-                : "text-[#64748B] hover:text-[#1E293B] hover:bg-[#F1F5F9]"
-              }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+
 
       {/* ═══ Filters ═══ */}
       <div className="flex flex-wrap items-center gap-3 animate-fade-in">
@@ -525,8 +510,8 @@ export default function PatientsPage() {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={`w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${page === currentPage
-                      ? "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-sm"
-                      : "text-[#64748B] hover:bg-[#F1F5F9]"
+                    ? "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-sm"
+                    : "text-[#64748B] hover:bg-[#F1F5F9]"
                     }`}
                 >
                   {page}
@@ -830,8 +815,8 @@ export default function PatientsPage() {
                         type="button"
                         onClick={() => updateField("bloodType", formData.bloodType === bt ? "" : bt)}
                         className={`px-3.5 py-1.5 rounded-lg text-sm font-medium border transition-all ${formData.bloodType === bt
-                            ? "bg-[#0072FF] text-white border-[#0072FF]"
-                            : "bg-white text-[#475569] border-[#E2E8F0] hover:border-[#0072FF]/50"
+                          ? "bg-[#0072FF] text-white border-[#0072FF]"
+                          : "bg-white text-[#475569] border-[#E2E8F0] hover:border-[#0072FF]/50"
                           }`}
                       >
                         {bt}
@@ -997,8 +982,8 @@ export default function PatientsPage() {
                   onClick={handleSave}
                   disabled={saveSuccess}
                   className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg active:scale-[0.98] ${saveSuccess
-                      ? "bg-green-500 text-white shadow-green-500/20"
-                      : "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-[#0072FF]/20 hover:shadow-xl hover:brightness-110"
+                    ? "bg-green-500 text-white shadow-green-500/20"
+                    : "bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white shadow-[#0072FF]/20 hover:shadow-xl hover:brightness-110"
                     }`}
                 >
                   {saveSuccess ? (
