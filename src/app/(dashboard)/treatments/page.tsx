@@ -291,8 +291,8 @@ export default function TreatmentsPage() {
                   <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ประเภท</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">สิทธิรักษ์</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ทันตแพทย์</th>
-                  <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">สถานะ</th>
-                  <th className="px-5 py-3.5 text-center text-xs font-semibold text-[#475569] uppercase tracking-wider">จัดการ</th>
+                  <th className="w-34 px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">สถานะ</th>
+                  <th className="w-32 px-5 py-3.5 text-center text-xs font-semibold text-[#475569] uppercase tracking-wider">จัดการ</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F1F5F9]">
