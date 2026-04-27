@@ -37,15 +37,15 @@ const statusColor: Record<string, string> = {
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Page header */}
       <div className="animate-fade-in">
-        <h2 className="text-2xl font-bold text-[#1E293B]">แดชบอร์ด</h2>
-        <p className="text-sm text-[#64748B] mt-0.5">ภาพรวมข้อมูลคลินิก</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B]">แดชบอร์ด</h2>
+        <p className="text-xs sm:text-sm text-[#64748B] mt-0.5">ภาพรวมข้อมูลคลินิก</p>
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-5">
         <div className="animate-fade-in stagger-4">
           <StatCard
             title="ยอดรวมเดือนนี้"
@@ -112,15 +112,15 @@ export default function DashboardPage() {
       </div>
 
       {/* Charts + Appointments */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in stagger-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 animate-fade-in stagger-5">
         {/* Treatment Chart */}
         <BarChart title="สรุปการรักษา (เดือนนี้)" data={treatmentChartData} />
 
         {/* Upcoming Appointments */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#E2E8F0]">
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-lg font-semibold text-[#1E293B]">นัดหมายวันนี้</h3>
-            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-[#E0EAFF] text-[#2B5998]">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-[#E2E8F0]">
+          <div className="flex items-center justify-between mb-4 sm:mb-5">
+            <h3 className="text-base sm:text-lg font-semibold text-[#1E293B]">นัดหมายวันนี้</h3>
+            <span className="text-xs font-semibold px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-[#E0EAFF] text-[#2B5998]">
               {upcomingAppointments.length} รายการ
             </span>
           </div>
@@ -146,10 +146,10 @@ export default function DashboardPage() {
 
       {/* Recent Patients Table */}
       <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden animate-fade-in stagger-6">
-        <div className="px-6 py-5 border-b border-[#E2E8F0]">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-[#E2E8F0]">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-[#1E293B]">คนไข้ล่าสุด</h3>
-            <button className="text-sm font-medium text-[#0072FF] hover:text-[#00C6FF] transition-colors">
+            <h3 className="text-base sm:text-lg font-semibold text-[#1E293B]">คนไข้ล่าสุด</h3>
+            <button className="text-xs sm:text-sm font-medium text-[#0072FF] hover:text-[#00C6FF] transition-colors">
               ดูทั้งหมด →
             </button>
           </div>

@@ -231,12 +231,12 @@ export default function TreatmentsPage() {
 
   return (
     <>
-      <div className="space-y-6 animate-fade-in">
+      <div className="space-y-4 sm:space-y-6 animate-fade-in">
         {/* ═══ Header ═══ */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h2 className="text-2xl font-bold text-[#1E293B]">จัดการรักษา</h2>
-            <p className="text-sm text-[#64748B] mt-0.5">ระบบจัดการสถานะการรักษา การขายสินค้า และชำระเงิน</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B]">จัดการรักษา</h2>
+            <p className="text-xs sm:text-sm text-[#64748B] mt-0.5">ระบบจัดการสถานะการรักษา การขายสินค้า และชำระเงิน</p>
           </div>
         </div>
 
@@ -263,8 +263,8 @@ export default function TreatmentsPage() {
         {/* ═══ Main Content / Table ═══ */}
         <div className="bg-white rounded-2xl shadow-sm border border-[#E2E8F0] overflow-hidden">
           {/* Toolbar */}
-          <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between bg-[#F8FAFC]">
-            <div className="relative w-[320px]">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#F8FAFC]">
+            <div className="relative w-full sm:w-[320px]">
               <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
               <input
                 type="text"
@@ -380,7 +380,7 @@ export default function TreatmentsPage() {
               <div className="flex-1 overflow-y-auto p-6 border-r border-[#E2E8F0] bg-[#F8FAFC]">
 
                 {/* Info Cards */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                   {/* Patient Info */}
                   <div className="bg-white p-4 rounded-xl border border-[#E2E8F0] shadow-sm">
                     <div className="flex justify-between items-start mb-2">
@@ -589,7 +589,7 @@ export default function TreatmentsPage() {
          ═══════════════════════════════════════════════════════════════ */}
       {productModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl flex flex-col h-[600px] overflow-hidden" style={{ animation: "modal-pop 0.2s ease-out" }}>
+          <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl flex flex-col h-[90vh] sm:h-[600px] overflow-hidden" style={{ animation: "modal-pop 0.2s ease-out" }}>
             {/* Header */}
             <div className="p-5 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
               <h3 className="text-lg font-bold text-[#1E293B] flex items-center gap-2">
@@ -604,7 +604,7 @@ export default function TreatmentsPage() {
             <div className="flex flex-1 overflow-hidden">
               {/* Product Selection List */}
               <div className="flex-1 flex flex-col border-r border-[#E2E8F0]">
-                <div className="p-4 border-b border-[#E2E8F0]">
+                <div className="p-3 sm:p-4 border-b border-[#E2E8F0]">
                   <div className="relative">
                     <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
                     <input
@@ -637,7 +637,7 @@ export default function TreatmentsPage() {
               </div>
 
               {/* Selected List Sidebar */}
-              <div className="w-[320px] bg-[#FAFBFC] flex flex-col">
+              <div className="w-full sm:w-[320px] bg-[#FAFBFC] flex flex-col">
                 <div className="p-4 border-b border-[#E2E8F0] font-bold text-[#1E293B] text-sm">
                   รายการที่เลือก ({tempProducts.length})
                 </div>

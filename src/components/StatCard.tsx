@@ -54,18 +54,18 @@ export default function StatCard({ title, value, change, icon, color }: StatCard
   const isUp = change >= 0;
 
   return (
-    <div className={`${c.bg} rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5`}>
-      <div className="flex items-start justify-between">
-        <div>
-          <p className={`text-sm font-medium ${c.sub} mb-1`}>{title}</p>
-          <p className={`text-3xl font-bold ${c.text} tracking-tight`}>{value}</p>
+    <div className={`${c.bg} rounded-xl sm:rounded-2xl p-3 sm:p-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5`}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className={`text-[11px] sm:text-sm font-medium ${c.sub} mb-0.5 sm:mb-1 truncate`}>{title}</p>
+          <p className={`text-xl sm:text-3xl font-bold ${c.text} tracking-tight`}>{value}</p>
         </div>
-        <div className={`${c.iconBg} p-2.5 rounded-xl`}>
+        <div className={`${c.iconBg} p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl flex-shrink-0`}>
           {icon}
         </div>
       </div>
-      <div className="mt-3 flex items-center gap-1.5">
-        <span className={`text-sm font-semibold flex items-center gap-0.5 ${isUp ? c.changeUp : c.changeDown}`}>
+      <div className="mt-2 sm:mt-3 flex items-center gap-1 sm:gap-1.5">
+        <span className={`text-xs sm:text-sm font-semibold flex items-center gap-0.5 ${isUp ? c.changeUp : c.changeDown}`}>
           {isUp ? (
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="18 15 12 9 6 15" /></svg>
           ) : (
