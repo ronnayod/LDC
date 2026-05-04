@@ -15,6 +15,13 @@ interface TreatmentRecord {
   dentist: string;
   status: "นัดหมายวันนี้" | "รอคิว" | "กำลังรักษา" | "รอชำระเงิน" | "สำเร็จ";
   items: BillItem[];
+  paymentDetail?: {
+    method: "cash" | "credit" | "transfer" | "deposit" | null;
+    cashReceived: string;
+    discountPrivilege: number;
+    billTotal: number;
+    finalTotal: number;
+  };
 }
 
 interface BillItem {
@@ -45,6 +52,58 @@ const mockProducts: ProductInfo[] = [
 ];
 
 const initialTreatments: TreatmentRecord[] = [
+  {
+    id: "6",
+    treatmentCode: "TR-20240425-006",
+    date: "2026-04-25T08:30:00",
+    patientName: "สมศรี มณีรัตน์",
+    patientHn: "HN-0006",
+    phone: "086-789-0123",
+    type: "ทั่วไป",
+    coverage: "ชำระเงินเอง",
+    dentist: "ทพญ. ดุจเดือน แขไข",
+    status: "นัดหมายวันนี้",
+    items: [],
+  },
+  {
+    id: "9",
+    treatmentCode: "TR-20240425-009",
+    date: "2026-04-25T13:00:00",
+    patientName: "ก้องเกียรติ พัฒนา",
+    patientHn: "HN-0009",
+    phone: "089-012-3456",
+    type: "ทั่วไป",
+    coverage: "ชำระเงินเอง",
+    dentist: "ทพ. อนันต์ ดีเลิศ",
+    status: "นัดหมายวันนี้",
+    items: [],
+  },
+  {
+    id: "7",
+    treatmentCode: "TR-20240425-007",
+    date: "2026-04-25T08:45:00",
+    patientName: "เอกชัย เจริญพร",
+    patientHn: "HN-0007",
+    phone: "087-890-1234",
+    type: "VIP",
+    coverage: "ประกันสุขภาพส่วนบุคคล",
+    dentist: "ทพ. ศรัณย์ มาทำนา",
+    status: "รอคิว",
+    items: [],
+  },
+  {
+    id: "8",
+    treatmentCode: "TR-20240425-008",
+    date: "2026-04-25T09:15:00",
+    patientName: "สุดาพร ศรีสุวรรณ",
+    patientHn: "HN-0008",
+    phone: "088-901-2345",
+    type: "ทั่วไป",
+    coverage: "ประกันสังคม",
+    dentist: "ทพญ. แพรวพรรณ สุขใจ",
+    status: "รอคิว",
+    items: [],
+  },
   {
     id: "1",
     treatmentCode: "TR-20240425-001",
@@ -89,6 +148,51 @@ const initialTreatments: TreatmentRecord[] = [
     status: "กำลังรักษา",
     items: [],
   },
+  {
+    id: "4",
+    treatmentCode: "TR-20240425-004",
+    date: "2026-04-25T14:00:00",
+    patientName: "สมบูรณ์ ดีพร้อม",
+    patientHn: "HN-0004",
+    phone: "084-567-8901",
+    type: "ทั่วไป",
+    coverage: "เงินสด",
+    dentist: "ทพญ. แพรวพรรณ สุขใจ",
+    status: "สำเร็จ",
+    items: [
+      { id: "i4", code: "T-004", name: "ถอนฟัน", price: 800, qty: 1, discount: 0, type: "treatment" },
+      { id: "i5", code: "P-001", name: "ยาสีฟัน สูตรเซนซิทีฟ", price: 150, qty: 1, discount: 0, type: "product" }
+    ],
+    paymentDetail: {
+      method: "cash",
+      cashReceived: "1000",
+      discountPrivilege: 50,
+      billTotal: 950,
+      finalTotal: 900
+    }
+  },
+  {
+    id: "5",
+    treatmentCode: "TR-20240425-005",
+    date: "2026-04-25T15:30:00",
+    patientName: "นารี รักษ์ฟัน",
+    patientHn: "HN-0005",
+    phone: "085-678-9012",
+    type: "VIP",
+    coverage: "เงินสด",
+    dentist: "ทพ. ศรัณย์ มาทำนา",
+    status: "สำเร็จ",
+    items: [
+      { id: "i6", code: "T-005", name: "รักษารากฟัน", price: 3500, qty: 1, discount: 0, type: "treatment" }
+    ],
+    paymentDetail: {
+      method: "transfer",
+      cashReceived: "0",
+      discountPrivilege: 0,
+      billTotal: 3500,
+      finalTotal: 3500
+    }
+  },
 ];
 
 const TABS = [
@@ -114,7 +218,7 @@ export default function TreatmentsPage() {
 
   // Payment Options State
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "credit" | "transfer" | "deposit" | null>(null);
-  const [cashReceived, setCashReceived] = useState<number>(0);
+  const [cashReceived, setCashReceived] = useState<string>("");
   const [discountPrivilege, setDiscountPrivilege] = useState<number>(0);
 
   // Add Product Modal State
@@ -127,6 +231,9 @@ export default function TreatmentsPage() {
 
   // Success Popup State
   const [successPopupOpen, setSuccessPopupOpen] = useState(false);
+  const [receiptModalOpen, setReceiptModalOpen] = useState(false);
+  const [viewPaymentModalOpen, setViewPaymentModalOpen] = useState(false);
+  const [viewPaymentRecord, setViewPaymentRecord] = useState<TreatmentRecord | null>(null);
 
   // ─── Filtered Data ─────────────────────────────────────
   const filteredTreatments = useMemo(() => {
@@ -157,7 +264,7 @@ export default function TreatmentsPage() {
     setSelectedRecord(record);
     setBillItems([...record.items]);
     setPaymentMethod(null);
-    setCashReceived(0);
+    setCashReceived("");
     setDiscountPrivilege(0);
     setPaymentModalOpen(true);
   };
@@ -208,18 +315,31 @@ export default function TreatmentsPage() {
     }
   };
 
+  const handleViewPaymentMethod = (record: TreatmentRecord) => {
+    setViewPaymentRecord(record);
+    setViewPaymentModalOpen(true);
+  };
+
+  const handlePrintReceipt = (record: TreatmentRecord) => {
+    setSelectedRecord(record);
+    setBillItems(record.items);
+    if (record.paymentDetail) {
+      setPaymentMethod(record.paymentDetail.method);
+      setCashReceived(record.paymentDetail.cashReceived);
+      setDiscountPrivilege(record.paymentDetail.discountPrivilege);
+    }
+    setReceiptModalOpen(true);
+  };
+
   const handleConfirmPayment = () => {
     if (!selectedRecord) return;
     // Update record status to สำเร็จ
     setTreatments(prev => prev.map(t => t.id === selectedRecord.id ? { ...t, status: "สำเร็จ", items: billItems } : t));
     setPaymentModalOpen(false);
     setQrModalOpen(false);
-    setSuccessPopupOpen(true);
-
-    // Auto-hide popup after 2 seconds
-    setTimeout(() => {
-      setSuccessPopupOpen(false);
-    }, 2000);
+    
+    // แสดงใบเสร็จรับเงิน
+    setReceiptModalOpen(true);
   };
 
   // Utility 
@@ -332,6 +452,22 @@ export default function TreatmentsPage() {
                           >
                             ชำระเงิน
                           </button>
+                        )}
+                        {t.status === 'สำเร็จ' && (
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleViewPaymentMethod(t)}
+                              className="px-3 py-1.5 bg-white border border-[#E2E8F0] text-[#64748B] text-xs font-semibold rounded-lg shadow-sm hover:bg-[#F1F5F9] transition-colors whitespace-nowrap"
+                            >
+                              วิธีชำระเงิน
+                            </button>
+                            <button
+                              onClick={() => handlePrintReceipt(t)}
+                              className="px-3 py-1.5 bg-[#1E40AF] text-white text-xs font-semibold rounded-lg shadow-sm hover:bg-[#1E3A8A] transition-colors whitespace-nowrap"
+                            >
+                              ปริ้นใบเสร็จ
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -543,18 +679,18 @@ export default function TreatmentsPage() {
                   {/* Cash Receive Input */}
                   {paymentMethod === 'cash' && (
                     <div className="bg-[#EFF6FF] p-4 rounded-xl border border-[#1E40AF]/20 animate-fade-in">
-                      <label className="block text-sm font-bold text-[#1E40AF] mb-2">รับเงินทอน</label>
+                      <label className="block text-sm font-bold text-[#1E40AF] mb-2">จำนวนเงินที่รับมา</label>
                       <input
                         type="number"
-                        value={cashReceived || ''}
-                        onChange={(e) => setCashReceived(Number(e.target.value))}
+                        value={cashReceived}
+                        onChange={(e) => setCashReceived(e.target.value)}
                         className="w-full p-3 rounded-lg border-2 border-[#1E40AF]/30 focus:border-[#1E40AF] text-xl font-bold text-right outline-none transition-colors"
                         placeholder="0.00"
                       />
-                      {cashReceived >= finalTotal && (
+                      {Number(cashReceived) >= finalTotal && (
                         <div className="flex justify-between items-center mt-3 pt-3 border-t border-[#1E40AF]/10">
                           <span className="font-semibold text-[#1E40AF]">เงินทอน</span>
-                          <span className="text-lg font-bold text-[#10B981]">฿{formatCurrency(cashReceived - finalTotal)}</span>
+                          <span className="text-lg font-bold text-[#10B981]">฿{formatCurrency(Number(cashReceived) - finalTotal)}</span>
                         </div>
                       )}
                     </div>
@@ -566,7 +702,7 @@ export default function TreatmentsPage() {
                 <div className="p-6 border-t border-[#E2E8F0] bg-white">
                   <button
                     onClick={handleSubmitPaymentClick}
-                    disabled={!paymentMethod || (paymentMethod === 'cash' && cashReceived < finalTotal)}
+                    disabled={!paymentMethod || (paymentMethod === 'cash' && Number(cashReceived) < finalTotal)}
                     className="w-full py-4 rounded-xl bg-[#1E40AF] text-white font-bold text-lg hover:bg-[#1E3A8A] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#1E40AF]/20 flex items-center justify-center gap-2"
                   >
                     ยืนยันการชำระเงิน <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12" /></svg>
@@ -723,16 +859,158 @@ export default function TreatmentsPage() {
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
-           SUCCESS POPUP
+           RECEIPT MODAL (ใบเสร็จรับเงิน)
          ═══════════════════════════════════════════════════════════════ */}
-      {successPopupOpen && (
+      {receiptModalOpen && selectedRecord && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl w-[320px] shadow-2xl flex flex-col items-center justify-center p-8 text-center" style={{ animation: "modal-pop 0.3s ease-out" }}>
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+          <style dangerouslySetInnerHTML={{__html: `
+            @media print {
+              body * { visibility: hidden; }
+              #receipt-content, #receipt-content * { visibility: visible; }
+              #receipt-content { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: white; }
+            }
+          `}} />
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col max-h-[90vh] overflow-hidden print:shadow-none print:w-full print:max-w-none" style={{ animation: "modal-pop 0.3s ease-out" }}>
+            
+            {/* ─── Printable Content ─── */}
+            <div id="receipt-content" className="p-8 flex-1 overflow-y-auto text-[#1E293B]">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold text-[#1E40AF]">LDC Dental</h2>
+                <p className="text-sm text-[#64748B] mt-1">สาขาสำนักงานใหญ่ (Mockup)</p>
+                <p className="text-sm text-[#64748B]">โทร: 02-123-4567</p>
+                <div className="mt-4 text-lg font-bold">ใบเสร็จรับเงิน / ใบกำกับภาษีอย่างย่อ</div>
+              </div>
+              
+              <div className="text-sm space-y-1 mb-6 border-b border-[#E2E8F0] pb-4">
+                <div className="flex justify-between"><span>วันที่:</span> <span>{new Date().toLocaleDateString('th-TH')} {new Date().toLocaleTimeString('th-TH')}</span></div>
+                <div className="flex justify-between"><span>เลขที่ใบเสร็จ:</span> <span>RC-{Date.now().toString().slice(-6)}</span></div>
+                <div className="flex justify-between"><span>ชื่อลูกค้า:</span> <span className="font-semibold">{selectedRecord.patientName}</span></div>
+                <div className="flex justify-between"><span>HN:</span> <span>{selectedRecord.patientHn}</span></div>
+                <div className="flex justify-between"><span>ทันตแพทย์:</span> <span>{selectedRecord.dentist}</span></div>
+              </div>
+
+              <div className="mb-4">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[#E2E8F0] text-[#64748B]">
+                      <th className="text-left pb-2 font-medium">รายการ</th>
+                      <th className="text-center pb-2 font-medium">จำนวน</th>
+                      <th className="text-right pb-2 font-medium">ราคา</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#F1F5F9]">
+                    {billItems.map((item, idx) => (
+                      <tr key={idx}>
+                        <td className="py-2">
+                          <div>{item.name}</div>
+                          {item.discount > 0 && <div className="text-xs text-red-500">ส่วนลด: -฿{formatCurrency(item.discount)}</div>}
+                        </td>
+                        <td className="py-2 text-center">{item.qty}</td>
+                        <td className="py-2 text-right">฿{formatCurrency(item.price * item.qty)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="border-t border-[#E2E8F0] pt-4 space-y-2 text-sm">
+                <div className="flex justify-between text-[#64748B]"><span>รวมเป็นเงิน:</span> <span>฿{formatCurrency(billTotal)}</span></div>
+                {discountPrivilege > 0 && (
+                  <div className="flex justify-between text-red-500"><span>ส่วนลดเพิ่มเติม:</span> <span>-฿{formatCurrency(discountPrivilege)}</span></div>
+                )}
+                <div className="flex justify-between font-bold text-lg pt-2 border-t border-[#E2E8F0]">
+                  <span>ยอดสุทธิ:</span> <span>฿{formatCurrency(finalTotal)}</span>
+                </div>
+              </div>
+
+              <div className="border-t border-[#E2E8F0] pt-4 mt-4 space-y-1 text-sm text-[#64748B]">
+                <div className="flex justify-between">
+                  <span>ชำระโดย:</span> 
+                  <span className="font-semibold">
+                    {paymentMethod === 'cash' ? 'เงินสด' : paymentMethod === 'transfer' ? 'โอนเงินผ่านธนาคาร' : paymentMethod === 'credit' ? 'บัตรเครดิต' : 'เงินฝาก'}
+                  </span>
+                </div>
+                {paymentMethod === 'cash' && (
+                  <>
+                    <div className="flex justify-between"><span>รับเงินมา:</span> <span>฿{formatCurrency(Number(cashReceived))}</span></div>
+                    <div className="flex justify-between text-[#10B981] font-medium"><span>เงินทอน:</span> <span>฿{formatCurrency(Number(cashReceived) - finalTotal)}</span></div>
+                  </>
+                )}
+              </div>
+
+              <div className="text-center mt-8 text-sm text-[#94A3B8]">
+                ขอบคุณที่ไว้วางใจให้เราดูแลรอยยิ้มของคุณ
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-[#1E293B] mb-2">ชำระเงินสำเร็จ</h3>
-            <p className="text-sm text-[#64748B]">ทำรายการชำระเงินเรียบร้อยแล้ว</p>
+
+            {/* ─── Actions (Not Printed) ─── */}
+            <div className="p-5 border-t border-[#E2E8F0] bg-[#F8FAFC] flex gap-3 print:hidden shrink-0">
+              <button 
+                onClick={() => window.print()}
+                className="flex-1 py-3 bg-[#1E40AF] text-white font-bold rounded-xl hover:bg-[#1E3A8A] transition-colors flex items-center justify-center gap-2"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></svg>
+                พิมพ์ใบเสร็จ
+              </button>
+              <button 
+                onClick={() => {
+                  setReceiptModalOpen(false);
+                  setSelectedRecord(null);
+                }}
+                className="flex-1 py-3 bg-white border border-[#E2E8F0] text-[#64748B] font-bold rounded-xl hover:bg-[#F1F5F9] transition-colors"
+              >
+                เสร็จสิ้น
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ═══════════════════════════════════════════════════════════════
+           VIEW PAYMENT METHOD MODAL
+         ═══════════════════════════════════════════════════════════════ */}
+      {viewPaymentModalOpen && viewPaymentRecord && viewPaymentRecord.paymentDetail && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl w-[400px] shadow-2xl flex flex-col overflow-hidden" style={{ animation: "modal-pop 0.3s ease-out" }}>
+            <div className="p-5 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
+              <h3 className="text-lg font-bold text-[#1E293B]">รายละเอียดการชำระเงิน</h3>
+              <button onClick={() => setViewPaymentModalOpen(false)} className="text-[#94A3B8] hover:text-[#1E293B]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
+                <span className="text-[#64748B]">ช่องทางการชำระ</span>
+                <span className="font-bold text-[#1E40AF]">
+                  {viewPaymentRecord.paymentDetail.method === 'cash' ? 'เงินสด' : 
+                   viewPaymentRecord.paymentDetail.method === 'transfer' ? 'โอนเงินผ่านธนาคาร' : 
+                   viewPaymentRecord.paymentDetail.method === 'credit' ? 'บัตรเครดิต' : 'เงินฝาก'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-[#64748B]">ยอดชำระสุทธิ</span>
+                <span className="font-bold text-[#1E293B]">฿{formatCurrency(viewPaymentRecord.paymentDetail.finalTotal)}</span>
+              </div>
+              {viewPaymentRecord.paymentDetail.method === 'cash' && (
+                <>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#64748B]">รับเงินมา</span>
+                    <span className="font-semibold text-[#1E293B]">฿{formatCurrency(Number(viewPaymentRecord.paymentDetail.cashReceived))}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#64748B]">เงินทอน</span>
+                    <span className="font-semibold text-[#10B981]">฿{formatCurrency(Number(viewPaymentRecord.paymentDetail.cashReceived) - viewPaymentRecord.paymentDetail.finalTotal)}</span>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="p-4 border-t border-[#E2E8F0] bg-[#F8FAFC]">
+              <button 
+                onClick={() => setViewPaymentModalOpen(false)}
+                className="w-full py-2.5 bg-white border border-[#E2E8F0] text-[#64748B] font-bold rounded-xl hover:bg-[#F1F5F9] transition-colors"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
           </div>
         </div>
       )}
