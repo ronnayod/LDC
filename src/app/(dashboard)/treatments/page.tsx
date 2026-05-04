@@ -436,11 +436,13 @@ export default function TreatmentsPage() {
                       <td className="px-5 py-4 text-sm text-[#475569]">{t.dentist}</td>
                       <td className="px-5 py-4">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full
+                        ${t.status === 'นัดหมายวันนี้' ? 'bg-purple-50 text-purple-600 border border-purple-200' : ''}
+                        ${t.status === 'รอคิว' ? 'bg-pink-50 text-pink-600 border border-pink-200' : ''}
                         ${t.status === 'รอชำระเงิน' ? 'bg-[#FFFBEB] text-[#F59E0B] border border-[#FDE68A]' : ''}
                         ${t.status === 'กำลังรักษา' ? 'bg-blue-50 text-blue-600 border border-blue-200' : ''}
                         ${t.status === 'สำเร็จ' ? 'bg-green-50 text-green-600 border border-green-200' : ''}
                       `}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${t.status === 'รอชำระเงิน' ? 'bg-[#F59E0B]' : t.status === 'กำลังรักษา' ? 'bg-blue-500' : 'bg-green-500'}`}></span>
+                          <span className={`w-1.5 h-1.5 rounded-full ${t.status === 'นัดหมายวันนี้' ? 'bg-purple-500' : t.status === 'รอคิว' ? 'bg-pink-500' : t.status === 'รอชำระเงิน' ? 'bg-[#F59E0B]' : t.status === 'กำลังรักษา' ? 'bg-blue-500' : 'bg-green-500'}`}></span>
                           {t.status}
                         </span>
                       </td>
