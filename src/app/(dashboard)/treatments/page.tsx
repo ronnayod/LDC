@@ -53,6 +53,32 @@ const mockProducts: ProductInfo[] = [
 
 const initialTreatments: TreatmentRecord[] = [
   {
+    id: "11",
+    treatmentCode: "TR-20240425-011",
+    date: "2026-04-25T08:30:00",
+    patientName: "ปรมิทร์ ยามา",
+    patientHn: "HN-0011",
+    phone: "086-789-0123",
+    type: "ทั่วไป",
+    coverage: "ชำระเงินเอง",
+    dentist: "ทพญ. ดุจเดือน แขไข",
+    status: "นัดหมายวันนี้",
+    items: [],
+  },
+  {
+    id: "10",
+    treatmentCode: "TR-20240425-010",
+    date: "2026-04-25T13:00:00",
+    patientName: "มานพ หลงจือ",
+    patientHn: "HN-0010",
+    phone: "089-012-3456",
+    type: "ทั่วไป",
+    coverage: "ชำระเงินเอง",
+    dentist: "ทพ. อนันต์ ดีเลิศ",
+    status: "นัดหมายวันนี้",
+    items: [],
+  },
+  {
     id: "6",
     treatmentCode: "TR-20240425-006",
     date: "2026-04-25T08:30:00",
@@ -105,6 +131,19 @@ const initialTreatments: TreatmentRecord[] = [
     items: [],
   },
   {
+    id: "12",
+    treatmentCode: "TR-20240425-012",
+    date: "2026-04-25T09:15:00",
+    patientName: "ศุ๓ชัย ยามสา",
+    patientHn: "HN-0012",
+    phone: "088-901-2345",
+    type: "ทั่วไป",
+    coverage: "ประกันสังคม",
+    dentist: "ทพญ. แพรวพรรณ สุขใจ",
+    status: "รอคิว",
+    items: [],
+  },
+  {
     id: "1",
     treatmentCode: "TR-20240425-001",
     date: "2026-04-25T09:00:00",
@@ -145,6 +184,45 @@ const initialTreatments: TreatmentRecord[] = [
     type: "ทั่วไป",
     coverage: "ชำระเงินเอง",
     dentist: "ทพญ. แดนสนรยา มาทำนา",
+    status: "กำลังรักษา",
+    items: [],
+  },
+  {
+    id: "13",
+    treatmentCode: "TR-20240425-013",
+    date: "2026-04-25T11:00:00",
+    patientName: "ณัฐฐินันท์ ทับทิม",
+    patientHn: "HN-0013",
+    phone: "083-456-7890",
+    type: "ทั่วไป",
+    coverage: "ชำระเงินเอง",
+    dentist: "ทพ. อนันต์ ดีเลิศ",
+    status: "กำลังรักษา",
+    items: [],
+  },
+  {
+    id: "14",
+    treatmentCode: "TR-20240425-014",
+    date: "2026-04-25T11:00:00",
+    patientName: "อภินันท์ มณีรัตน์",
+    patientHn: "HN-0014",
+    phone: "083-456-7890",
+    type: "ทั่วไป",
+    coverage: "ชำระเงินเอง",
+    dentist: "ทพญ. แพรวพรรณ สุขใจ",
+    status: "กำลังรักษา",
+    items: [],
+  },
+  {
+    id: "15",
+    treatmentCode: "TR-20240425-015",
+    date: "2026-04-25T11:00:00",
+    patientName: "สุภัสสร กิจเจริญ",
+    patientHn: "HN-0015",
+    phone: "083-456-7890",
+    type: "ทั่วไป",
+    coverage: "ชำระเงินเอง",
+    dentist: "ทพญ. ดุจเดือน แขไข",
     status: "กำลังรักษา",
     items: [],
   },
@@ -208,7 +286,7 @@ export default function TreatmentsPage() {
   useEffect(() => setIsMounted(true), []);
 
   const [treatments, setTreatments] = useState<TreatmentRecord[]>(initialTreatments);
-  const [activeTab, setActiveTab] = useState<string>("รอชำระเงิน");
+  const [activeTab, setActiveTab] = useState<string>("นัดหมายวันนี้");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Payment Modal State
@@ -337,9 +415,27 @@ export default function TreatmentsPage() {
     setTreatments(prev => prev.map(t => t.id === selectedRecord.id ? { ...t, status: "สำเร็จ", items: billItems } : t));
     setPaymentModalOpen(false);
     setQrModalOpen(false);
-    
+
     // แสดงใบเสร็จรับเงิน
     setReceiptModalOpen(true);
+  };
+
+  const handleConfirmAppointment = (record: TreatmentRecord) => {
+    setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "รอคิว" } : t));
+  };
+
+  const handleCancelAppointment = (record: TreatmentRecord) => {
+    if (window.confirm('คุณต้องการยกเลิกนัดหมายนี้ใช่หรือไม่?')) {
+      setTreatments(prev => prev.filter(t => t.id !== record.id));
+    }
+  };
+
+  const handleCallQueue = (record: TreatmentRecord) => {
+    setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "กำลังรักษา" } : t));
+  };
+
+  const handleFinishTreatment = (record: TreatmentRecord) => {
+    setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "รอชำระเงิน" } : t));
   };
 
   // Utility 
@@ -408,8 +504,8 @@ export default function TreatmentsPage() {
                   <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">เวลา</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ชื่อ-นามสกุล</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ติดต่อ</th>
-                  <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ประเภท</th>
-                  <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">สิทธิรักษ์</th>
+                  {/* <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ประเภท</th> */}
+                  <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">สิทธิการรักษา</th>
                   <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ทันตแพทย์</th>
                   <th className="w-34 px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">สถานะ</th>
                   <th className="w-32 px-5 py-3.5 text-center text-xs font-semibold text-[#475569] uppercase tracking-wider">จัดการ</th>
@@ -426,12 +522,12 @@ export default function TreatmentsPage() {
                         <div className="text-xs text-[#94A3B8]">{t.patientHn}</div>
                       </td>
                       <td className="px-5 py-4 text-sm text-[#64748B]">{t.phone}</td>
-                      <td className="px-5 py-4">
+                      {/* <td className="px-5 py-4">
                         {t.type === 'VIP'
                           ? <span className="px-2.5 py-1 text-xs font-semibold bg-blue-100 text-blue-700 rounded-lg">VIP</span>
                           : <span className="px-2.5 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-lg">ทั่วไป</span>
                         }
-                      </td>
+                      </td> */}
                       <td className="px-5 py-4 text-sm text-[#475569]">{t.coverage}</td>
                       <td className="px-5 py-4 text-sm text-[#475569]">{t.dentist}</td>
                       <td className="px-5 py-4">
@@ -447,10 +543,42 @@ export default function TreatmentsPage() {
                         </span>
                       </td>
                       <td className="px-5 py-4 text-center">
+                        {t.status === 'นัดหมายวันนี้' && (
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => handleConfirmAppointment(t)}
+                              className="px-3 py-1.5 bg-green-600 text-white text-xs font-semibold rounded-lg shadow-sm hover:bg-green-700 transition-colors whitespace-nowrap"
+                            >
+                              ยืนยัน
+                            </button>
+                            <button
+                              onClick={() => handleCancelAppointment(t)}
+                              className="px-3 py-1.5 bg-white border border-red-200 text-red-600 text-xs font-semibold rounded-lg shadow-sm hover:bg-red-50 transition-colors whitespace-nowrap"
+                            >
+                              ยกเลิก
+                            </button>
+                          </div>
+                        )}
+                        {t.status === 'รอคิว' && (
+                          <button
+                            onClick={() => handleCallQueue(t)}
+                            className="px-3 py-1.5 bg-pink-600 text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-pink-700 transition-colors"
+                          >
+                            เข้ารักษา
+                          </button>
+                        )}
+                        {t.status === 'กำลังรักษา' && (
+                          <button
+                            onClick={() => handleFinishTreatment(t)}
+                            className="px-3 py-1.5 bg-sky-600 text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-sky-700 transition-colors"
+                          >
+                            รักษาเสร็จ
+                          </button>
+                        )}
                         {t.status === 'รอชำระเงิน' && (
                           <button
                             onClick={() => handleOpenPayment(t)}
-                            className="px-4 py-1.5 bg-[#1E40AF] text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-[#1E3A8A] transition-colors"
+                            className="px-4 py-1.5 bg-purple-600 text-white text-sm font-semibold rounded-lg shadow-sm hover:bg-purple-700 transition-colors"
                           >
                             ชำระเงิน
                           </button>
@@ -659,22 +787,6 @@ export default function TreatmentsPage() {
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={paymentMethod === 'transfer' ? "#1E40AF" : "#64748B"} strokeWidth="1.5" className="mb-2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11M8 14v3m4-3v3m4-3v3" /></svg>
                         <span className={`text-sm font-semibold ${paymentMethod === 'transfer' ? 'text-[#1E40AF]' : 'text-[#64748B]'}`}>โอนผ่านธนาคาร</span>
                       </button>
-                      <button
-                        onClick={() => setPaymentMethod('credit')}
-                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all
-                          ${paymentMethod === 'credit' ? 'border-[#1E40AF] bg-[#EFF6FF]' : 'border-[#E2E8F0] bg-white hover:border-[#1E40AF]/40 hover:bg-[#EFF6FF]/30'}`}
-                      >
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={paymentMethod === 'credit' ? "#1E40AF" : "#64748B"} strokeWidth="1.5" className="mb-2"><rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" /></svg>
-                        <span className={`text-sm font-semibold ${paymentMethod === 'credit' ? 'text-[#1E40AF]' : 'text-[#64748B]'}`}>บัตรเครดิต</span>
-                      </button>
-                      <button
-                        onClick={() => setPaymentMethod('deposit')}
-                        className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all opacity-50 cursor-not-allowed`}
-                        disabled
-                      >
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="1.5" className="mb-2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-                        <span className={`text-sm font-semibold text-[#94A3B8]`}>เงินฝาก (฿0.00)</span>
-                      </button>
                     </div>
                   </div>
 
@@ -865,7 +977,8 @@ export default function TreatmentsPage() {
          ═══════════════════════════════════════════════════════════════ */}
       {receiptModalOpen && selectedRecord && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-          <style dangerouslySetInnerHTML={{__html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             @media print {
               body * { visibility: hidden; }
               #receipt-content, #receipt-content * { visibility: visible; }
@@ -873,7 +986,7 @@ export default function TreatmentsPage() {
             }
           `}} />
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl flex flex-col max-h-[90vh] overflow-hidden print:shadow-none print:w-full print:max-w-none" style={{ animation: "modal-pop 0.3s ease-out" }}>
-            
+
             {/* ─── Printable Content ─── */}
             <div id="receipt-content" className="p-8 flex-1 overflow-y-auto text-[#1E293B]">
               <div className="text-center mb-6">
@@ -882,7 +995,7 @@ export default function TreatmentsPage() {
                 <p className="text-sm text-[#64748B]">โทร: 02-123-4567</p>
                 <div className="mt-4 text-lg font-bold">ใบเสร็จรับเงิน / ใบกำกับภาษีอย่างย่อ</div>
               </div>
-              
+
               <div className="text-sm space-y-1 mb-6 border-b border-[#E2E8F0] pb-4">
                 <div className="flex justify-between"><span>วันที่:</span> <span>{new Date().toLocaleDateString('th-TH')} {new Date().toLocaleTimeString('th-TH')}</span></div>
                 <div className="flex justify-between"><span>เลขที่ใบเสร็จ:</span> <span>RC-{Date.now().toString().slice(-6)}</span></div>
@@ -927,7 +1040,7 @@ export default function TreatmentsPage() {
 
               <div className="border-t border-[#E2E8F0] pt-4 mt-4 space-y-1 text-sm text-[#64748B]">
                 <div className="flex justify-between">
-                  <span>ชำระโดย:</span> 
+                  <span>ชำระโดย:</span>
                   <span className="font-semibold">
                     {paymentMethod === 'cash' ? 'เงินสด' : paymentMethod === 'transfer' ? 'โอนเงินผ่านธนาคาร' : paymentMethod === 'credit' ? 'บัตรเครดิต' : 'เงินฝาก'}
                   </span>
@@ -947,14 +1060,14 @@ export default function TreatmentsPage() {
 
             {/* ─── Actions (Not Printed) ─── */}
             <div className="p-5 border-t border-[#E2E8F0] bg-[#F8FAFC] flex gap-3 print:hidden shrink-0">
-              <button 
+              <button
                 onClick={() => window.print()}
                 className="flex-1 py-3 bg-[#1E40AF] text-white font-bold rounded-xl hover:bg-[#1E3A8A] transition-colors flex items-center justify-center gap-2"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9" /><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" /><rect x="6" y="14" width="12" height="8" /></svg>
                 พิมพ์ใบเสร็จ
               </button>
-              <button 
+              <button
                 onClick={() => {
                   setReceiptModalOpen(false);
                   setSelectedRecord(null);
@@ -983,9 +1096,10 @@ export default function TreatmentsPage() {
               <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
                 <span className="text-[#64748B]">ช่องทางการชำระ</span>
                 <span className="font-bold text-[#1E40AF]">
-                  {viewPaymentRecord.paymentDetail.method === 'cash' ? 'เงินสด' : 
-                   viewPaymentRecord.paymentDetail.method === 'transfer' ? 'โอนเงินผ่านธนาคาร' : 
-                   viewPaymentRecord.paymentDetail.method === 'credit' ? 'บัตรเครดิต' : 'เงินฝาก'}
+                  {viewPaymentRecord.paymentDetail.method === 'cash' ? 'เงินสด' :
+                    viewPaymentRecord.paymentDetail.method === 'transfer' ? 'โอนเงินผ่านธนาคาร' :
+                      viewPaymentRecord.paymentDetail.method === 'credit' ? 'บัตรเครดิต' : 'เงินฝาก'
+                  }
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -1006,7 +1120,7 @@ export default function TreatmentsPage() {
               )}
             </div>
             <div className="p-4 border-t border-[#E2E8F0] bg-[#F8FAFC]">
-              <button 
+              <button
                 onClick={() => setViewPaymentModalOpen(false)}
                 className="w-full py-2.5 bg-white border border-[#E2E8F0] text-[#64748B] font-bold rounded-xl hover:bg-[#F1F5F9] transition-colors"
               >
