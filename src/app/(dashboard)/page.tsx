@@ -149,9 +149,9 @@ export default function DashboardPage() {
         <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-[#E2E8F0]">
           <div className="flex items-center justify-between">
             <h3 className="text-base sm:text-lg font-semibold text-[#1E293B]">คนไข้ล่าสุด</h3>
-            <button className="text-xs sm:text-sm font-medium text-[#0072FF] hover:text-[#00C6FF] transition-colors">
+            {/* <button className="text-xs sm:text-sm font-medium text-[#0072FF] hover:text-[#00C6FF] transition-colors">
               ดูทั้งหมด →
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="overflow-x-auto">
