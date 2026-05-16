@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import SuccessToast from "@/components/SuccessToast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 // ─── Types ─────────────────────────────────────────────
 interface Patient {
@@ -145,6 +147,20 @@ export default function PatientsPage() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // Toast notification
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "edit" | "delete">("success");
+  const [toastVisible, setToastVisible] = useState(false);
+  const showToast = useCallback((message: string, type: "success" | "edit" | "delete") => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  }, []);
+
+  // Confirm dialog
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{ title: string; message: string; type: "edit" | "delete"; onConfirm: () => void }>({ title: "", message: "", type: "edit", onConfirm: () => {} });
+
   // Close menu on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -269,10 +285,10 @@ export default function PatientsPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSave = () => {
-    if (!validateForm()) return;
+  const doSave = useCallback(() => {
+    const isAdd = modalMode === "add";
 
-    if (modalMode === "add") {
+    if (isAdd) {
       const newPatient: Patient = {
         id: String(Date.now()),
         hn: nextHn(),
@@ -296,15 +312,42 @@ export default function PatientsPage() {
       setSaveSuccess(false);
       setModalMode("closed");
       setSelectedPatient(null);
+      showToast(isAdd ? "เพิ่มข้อมูลเรียบร้อย" : "แก้ไขข้อมูลเรียบร้อย", isAdd ? "success" : "edit");
     }, 800);
+  }, [modalMode, formData, selectedPatient, showToast]);
+
+  const handleSave = () => {
+    if (!validateForm()) return;
+    if (modalMode === "edit") {
+      setConfirmConfig({
+        title: "ยืนยันการแก้ไขข้อมูล?",
+        message: "คุณต้องการบันทึกการแก้ไขข้อมูลคนไข้นี้ใช่หรือไม่?",
+        type: "edit",
+        onConfirm: () => { setConfirmOpen(false); doSave(); },
+      });
+      setConfirmOpen(true);
+    } else {
+      doSave();
+    }
   };
 
-  const handleDelete = () => {
+  const doDelete = useCallback(() => {
     if (selectedPatient) {
       setPatients((prev) => prev.filter((p) => p.id !== selectedPatient.id));
     }
     setModalMode("closed");
     setSelectedPatient(null);
+    showToast("ลบข้อมูลเรียบร้อย", "delete");
+  }, [selectedPatient, showToast]);
+
+  const handleDelete = () => {
+    setConfirmConfig({
+      title: "ยืนยันการลบข้อมูล?",
+      message: `คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลคนไข้ ${selectedPatient?.firstName || ""} ${selectedPatient?.lastName || ""}? การดำเนินการนี้ไม่สามารถย้อนกลับได้`,
+      type: "delete",
+      onConfirm: () => { setConfirmOpen(false); doDelete(); },
+    });
+    setConfirmOpen(true);
   };
 
   // ─── Render ───────────────────────────────────────────
@@ -1009,6 +1052,25 @@ export default function PatientsPage() {
           </div>
         </div>
       )}
+
+      {/* ═══ Confirm Dialog ═══ */}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        type={confirmConfig.type}
+        confirmText={confirmConfig.type === "delete" ? "ยืนยันลบ" : "ยืนยันแก้ไข"}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
+      {/* ═══ Toast Notification ═══ */}
+      <SuccessToast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
 
       {/* ═══ Modal Animation Style ═══ */}
       <style>{`

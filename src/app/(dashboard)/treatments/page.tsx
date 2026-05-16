@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import SuccessToast from "@/components/SuccessToast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 // ─── Types ─────────────────────────────────────────────
 interface TreatmentRecord {
@@ -313,6 +315,20 @@ export default function TreatmentsPage() {
   const [viewPaymentModalOpen, setViewPaymentModalOpen] = useState(false);
   const [viewPaymentRecord, setViewPaymentRecord] = useState<TreatmentRecord | null>(null);
 
+  // Toast notification
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "edit" | "delete" | "treatment" | "sky" | "purple">("success");
+  const [toastVisible, setToastVisible] = useState(false);
+  const showToast = useCallback((message: string, type: "success" | "edit" | "delete" | "treatment" | "sky" | "purple") => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  }, []);
+
+  // Confirm dialog
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{ title: string; message: string; type: "edit" | "delete" | "success" | "treatment" | "sky" | "purple"; confirmText: string; onConfirm: () => void }>({ title: "", message: "", type: "edit", confirmText: "ยืนยัน", onConfirm: () => { } });
+
   // ─── Filtered Data ─────────────────────────────────────
   const filteredTreatments = useMemo(() => {
     return treatments.filter(t => {
@@ -418,24 +434,67 @@ export default function TreatmentsPage() {
 
     // แสดงใบเสร็จรับเงิน
     setReceiptModalOpen(true);
+    showToast("ชำระเงินเรียบร้อย", "purple");
   };
 
   const handleConfirmAppointment = (record: TreatmentRecord) => {
-    setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "รอคิว" } : t));
+    setConfirmConfig({
+      title: "ยืนยันนัดหมาย?",
+      message: `คุณต้องการยืนยันนัดหมายของ ${record.patientName} ใช่หรือไม่?`,
+      type: "success",
+      confirmText: "ยืนยัน",
+      onConfirm: () => {
+        setConfirmOpen(false);
+        setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "รอคิว" } : t));
+        showToast("ยืนยันนัดหมายเรียบร้อย", "success");
+      },
+    });
+    setConfirmOpen(true);
   };
 
   const handleCancelAppointment = (record: TreatmentRecord) => {
-    if (window.confirm('คุณต้องการยกเลิกนัดหมายนี้ใช่หรือไม่?')) {
-      setTreatments(prev => prev.filter(t => t.id !== record.id));
-    }
+    setConfirmConfig({
+      title: "ยกเลิกนัดหมาย?",
+      message: `คุณแน่ใจหรือไม่ว่าต้องการยกเลิกนัดหมายของ ${record.patientName}?`,
+      type: "delete",
+      confirmText: "ยกเลิก",
+      onConfirm: () => {
+        setConfirmOpen(false);
+        setTreatments(prev => prev.filter(t => t.id !== record.id));
+        showToast("ยกเลิกนัดหมายเรียบร้อย", "delete");
+      },
+    });
+    setConfirmOpen(true);
   };
 
   const handleCallQueue = (record: TreatmentRecord) => {
-    setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "กำลังรักษา" } : t));
+    setConfirmConfig({
+      title: "เข้ารับการรักษา?",
+      message: `คุณต้องการให้ ${record.patientName} เข้ารับการรักษาใช่หรือไม่?`,
+      type: "treatment",
+      confirmText: "เข้ารักษา",
+      onConfirm: () => {
+        setConfirmOpen(false);
+        setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "กำลังรักษา" } : t));
+        showToast("เข้ารับการรักษาเรียบร้อย", "treatment");
+      },
+    });
+    setConfirmOpen(true);
   };
 
   const handleFinishTreatment = (record: TreatmentRecord) => {
-    setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "รอชำระเงิน" } : t));
+    setConfirmConfig({
+      title: "รักษาเสร็จ?",
+      message: `คุณต้องการยืนยันว่าการรักษา ${record.patientName} เสร็จสิ้นแล้วใช่หรือไม่?`,
+      type: "sky",
+      confirmText: "รักษาเสร็จ",
+      onConfirm: () => {
+        setConfirmOpen(false);
+        setTreatments(prev => prev.map(t => t.id === record.id ? { ...t, status: "รอชำระเงิน" } : t));
+        showToast("รักษาเสร็จเรียบร้อย", "sky");
+      },
+    });
+    setConfirmOpen(true);
   };
 
   // Utility 
@@ -990,7 +1049,7 @@ export default function TreatmentsPage() {
             {/* ─── Printable Content ─── */}
             <div id="receipt-content" className="p-8 flex-1 overflow-y-auto text-[#1E293B]">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-[#1E40AF]">LDC Dental</h2>
+                <h2 className="text-2xl font-bold text-[#1E40AF]">Lunithic Mockup</h2>
                 <p className="text-sm text-[#64748B] mt-1">สาขาสำนักงานใหญ่ (Mockup)</p>
                 <p className="text-sm text-[#64748B]">โทร: 02-123-4567</p>
                 <div className="mt-4 text-lg font-bold">ใบเสร็จรับเงิน / ใบกำกับภาษีอย่างย่อ</div>
@@ -1130,6 +1189,23 @@ export default function TreatmentsPage() {
           </div>
         </div>
       )}
+      {/* ═══ Confirm Dialog ═══ */}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        type={confirmConfig.type}
+        confirmText={confirmConfig.confirmText}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmOpen(false)}
+      />
+      {/* ═══ Toast Notification ═══ */}
+      <SuccessToast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
     </>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import SuccessToast from "@/components/SuccessToast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 // ─── Types ─────────────────────────────────────────────
 interface Appointment {
@@ -131,6 +133,20 @@ export default function AppointmentsPage() {
   // 3-dot menu
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Toast notification
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "edit" | "delete">("success");
+  const [toastVisible, setToastVisible] = useState(false);
+  const showToast = useCallback((message: string, type: "success" | "edit" | "delete") => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  }, []);
+
+  // Confirm dialog
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{ title: string; message: string; type: "edit" | "delete"; onConfirm: () => void }>({ title: "", message: "", type: "edit", onConfirm: () => {} });
 
   // Close menus on outside click
   useEffect(() => {
@@ -348,27 +364,68 @@ export default function AppointmentsPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSave = () => {
-    if (!validateForm()) return;
-    if (modalMode === "add") {
+  const doSave = useCallback(() => {
+    const isAdd = modalMode === "add";
+    if (isAdd) {
       const newApp: Appointment = { id: String(Date.now()), ...formData };
       setAppointments((prev) => [newApp, ...prev]);
     } else if (modalMode === "edit" && selectedAppointment) {
       setAppointments((prev) => prev.map((a) => a.id === selectedAppointment.id ? { ...a, ...formData } : a));
     }
     setSaveSuccess(true);
-    setTimeout(() => { setSaveSuccess(false); setModalMode("closed"); setSelectedAppointment(null); }, 800);
+    setTimeout(() => {
+      setSaveSuccess(false);
+      setModalMode("closed");
+      setSelectedAppointment(null);
+      showToast(isAdd ? "เพิ่มข้อมูลเรียบร้อย" : "แก้ไขข้อมูลเรียบร้อย", isAdd ? "success" : "edit");
+    }, 800);
+  }, [modalMode, formData, selectedAppointment, showToast]);
+
+  const handleSave = () => {
+    if (!validateForm()) return;
+    if (modalMode === "edit") {
+      setConfirmConfig({
+        title: "ยืนยันการแก้ไขข้อมูล?",
+        message: "คุณต้องการบันทึกการแก้ไขข้อมูลนัดหมายนี้ใช่หรือไม่?",
+        type: "edit",
+        onConfirm: () => { setConfirmOpen(false); doSave(); },
+      });
+      setConfirmOpen(true);
+    } else {
+      doSave();
+    }
   };
 
-  const handleDelete = () => {
+  const doDelete = useCallback(() => {
     if (selectedAppointment) setAppointments((prev) => prev.filter((a) => a.id !== selectedAppointment.id));
     setModalMode("closed");
     setSelectedAppointment(null);
+    showToast("ลบข้อมูลเรียบร้อย", "delete");
+  }, [selectedAppointment, showToast]);
+
+  const handleDelete = () => {
+    setConfirmConfig({
+      title: "ยืนยันการลบข้อมูล?",
+      message: `คุณแน่ใจหรือไม่ว่าต้องการลบนัดหมายของ ${selectedAppointment?.patientName || ""}? การดำเนินการนี้ไม่สามารถย้อนกลับได้`,
+      type: "delete",
+      onConfirm: () => { setConfirmOpen(false); doDelete(); },
+    });
+    setConfirmOpen(true);
   };
 
   const handleBulkDelete = () => {
-    setAppointments((prev) => prev.filter((a) => !selectedIds.has(a.id)));
-    setSelectedIds(new Set());
+    setConfirmConfig({
+      title: "ยืนยันการลบข้อมูล?",
+      message: `คุณแน่ใจหรือไม่ว่าต้องการลบนัดหมายที่เลือก ${selectedIds.size} รายการ? การดำเนินการนี้ไม่สามารถย้อนกลับได้`,
+      type: "delete",
+      onConfirm: () => {
+        setConfirmOpen(false);
+        setAppointments((prev) => prev.filter((a) => !selectedIds.has(a.id)));
+        setSelectedIds(new Set());
+        showToast("ลบข้อมูลเรียบร้อย", "delete");
+      },
+    });
+    setConfirmOpen(true);
   };
 
   // ─── Build Calendar Grid ─────────────────────────────
@@ -771,7 +828,7 @@ export default function AppointmentsPage() {
             </p>
             <div className="flex gap-3">
               <button id="btn-cancel-delete" onClick={() => { setModalMode("closed"); setSelectedAppointment(null); }} className="flex-1 px-5 py-2.5 rounded-xl border border-[#E2E8F0] text-sm font-semibold text-[#475569] hover:bg-[#F1F5F9] transition-all">ยกเลิก</button>
-              <button id="btn-confirm-delete" onClick={handleDelete} className="flex-1 px-5 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-red-500/20">ยืนยันลบ</button>
+              <button id="btn-confirm-delete" onClick={doDelete} className="flex-1 px-5 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-red-500/20">ยืนยันลบ</button>
             </div>
           </div>
         </div>
@@ -1011,6 +1068,25 @@ export default function AppointmentsPage() {
           </div>
         </div>
       )}
+
+      {/* ═══ Confirm Dialog ═══ */}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        type={confirmConfig.type}
+        confirmText={confirmConfig.type === "delete" ? "ยืนยันลบ" : "ยืนยันแก้ไข"}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
+      {/* ═══ Toast Notification ═══ */}
+      <SuccessToast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
 
       {/* ═══ Modal Animation Style ═══ */}
       <style>{`

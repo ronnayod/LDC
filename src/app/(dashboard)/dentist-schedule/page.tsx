@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import SuccessToast from "@/components/SuccessToast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 // ─── Types ─────────────────────────────────────────────
 interface DentistSchedule {
@@ -128,6 +130,20 @@ export default function DentistSchedulePage() {
   // Context menu on schedule block
   const [contextMenu, setContextMenu] = useState<{ id: string; x: number; y: number } | null>(null);
   const contextRef = useRef<HTMLDivElement>(null);
+
+  // Toast notification
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "edit" | "delete">("success");
+  const [toastVisible, setToastVisible] = useState(false);
+  const showToast = useCallback((message: string, type: "success" | "edit" | "delete") => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  }, []);
+
+  // Confirm dialog
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmConfig, setConfirmConfig] = useState<{ title: string; message: string; type: "edit" | "delete"; onConfirm: () => void }>({ title: "", message: "", type: "edit", onConfirm: () => {} });
 
   // Close context menu on outside click
   useEffect(() => {
@@ -302,15 +318,14 @@ export default function DentistSchedulePage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSave = () => {
-    if (!validateForm()) return;
-
+  const doSave = useCallback(() => {
     const dentist = dentistOptions.find((d) => d.id === formData.dentistId);
     if (!dentist) return;
 
     const roomColor = ROOM_HEX[formData.room] || "#3B82F6";
+    const isAdd = modalMode === "add";
 
-    if (modalMode === "add") {
+    if (isAdd) {
       const newSchedules: DentistSchedule[] = formData.selectedDays.map((day) => ({
         id: String(Date.now()) + "-" + day,
         dentistId: formData.dentistId,
@@ -350,15 +365,42 @@ export default function DentistSchedulePage() {
       setSaveSuccess(false);
       setModalMode("closed");
       setSelectedSchedule(null);
+      showToast(isAdd ? "เพิ่มข้อมูลเรียบร้อย" : "แก้ไขข้อมูลเรียบร้อย", isAdd ? "success" : "edit");
     }, 800);
+  }, [modalMode, formData, selectedSchedule, showToast]);
+
+  const handleSave = () => {
+    if (!validateForm()) return;
+    if (modalMode === "edit") {
+      setConfirmConfig({
+        title: "ยืนยันการแก้ไขข้อมูล?",
+        message: "คุณต้องการบันทึกการแก้ไขตารางลงตรวจนี้ใช่หรือไม่?",
+        type: "edit",
+        onConfirm: () => { setConfirmOpen(false); doSave(); },
+      });
+      setConfirmOpen(true);
+    } else {
+      doSave();
+    }
   };
 
-  const handleDelete = () => {
+  const doDelete = useCallback(() => {
     if (selectedSchedule) {
       setSchedules((prev) => prev.filter((s) => s.id !== selectedSchedule.id));
     }
     setModalMode("closed");
     setSelectedSchedule(null);
+    showToast("ลบข้อมูลเรียบร้อย", "delete");
+  }, [selectedSchedule, showToast]);
+
+  const handleDelete = () => {
+    setConfirmConfig({
+      title: "ยืนยันการลบข้อมูล?",
+      message: `คุณแน่ใจหรือไม่ว่าต้องการลบตารางลงตรวจของ ${selectedSchedule?.dentistName || ""}? การดำเนินการนี้ไม่สามารถย้อนกลับได้`,
+      type: "delete",
+      onConfirm: () => { setConfirmOpen(false); doDelete(); },
+    });
+    setConfirmOpen(true);
   };
 
   const handleBlockContextMenu = (e: React.MouseEvent, schedule: DentistSchedule) => {
@@ -772,7 +814,7 @@ export default function DentistSchedulePage() {
             </p>
             <div className="flex gap-3">
               <button id="btn-cancel-delete" onClick={() => { setModalMode("closed"); setSelectedSchedule(null); }} className="flex-1 px-5 py-2.5 rounded-xl border border-[#E2E8F0] text-sm font-semibold text-[#475569] hover:bg-[#F1F5F9] transition-all">ยกเลิก</button>
-              <button id="btn-confirm-delete" onClick={handleDelete} className="flex-1 px-5 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-red-500/20">ยืนยันลบ</button>
+              <button id="btn-confirm-delete" onClick={doDelete} className="flex-1 px-5 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 active:scale-[0.98] transition-all shadow-lg shadow-red-500/20">ยืนยันลบ</button>
             </div>
           </div>
         </div>
@@ -1014,6 +1056,25 @@ export default function DentistSchedulePage() {
           </div>
         </div>
       )}
+
+      {/* ═══ Confirm Dialog ═══ */}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        type={confirmConfig.type}
+        confirmText={confirmConfig.type === "delete" ? "ยืนยันลบ" : "ยืนยันแก้ไข"}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
+      {/* ═══ Toast Notification ═══ */}
+      <SuccessToast
+        message={toastMessage}
+        type={toastType}
+        isVisible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
 
       {/* ═══ Modal Animation Style ═══ */}
       <style>{`
