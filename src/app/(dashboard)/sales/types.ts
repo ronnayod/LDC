@@ -40,4 +40,6 @@ export interface SaleRecord {
   items: CartItem[];
   total: number;
   paymentMethod: string;
+  cashReceived: string;
+  discount: number;
 }

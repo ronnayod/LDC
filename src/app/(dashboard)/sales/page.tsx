@@ -34,9 +34,9 @@ export default function SalesPage() {
 
   // History
   const [salesHistory, setSalesHistory] = useState<SaleRecord[]>([
-    { id: "1", receiptNo: "RC-000001", date: "2026-05-20T09:30:00", patientName: "สิทธิชัย โสภา", patientHn: "RK-122094223", items: [{ id: "1", code: "P-001", name: "ยาสีฟัน สูตรเซนซิทีฟ", price: 150, qty: 2, discount: 0 }], total: 300, paymentMethod: "เงินสด" },
-    { id: "2", receiptNo: "RC-000002", date: "2026-05-20T10:15:00", patientName: "พรรษา ธาดาวรวงศ์", patientHn: "RK-122094224", items: [{ id: "2", code: "SET001", name: "ชุดอุปกรณ์ทำความสะอาดหลังรักษาโรคเหงือก", price: 1000, qty: 1, discount: 0 }], total: 1000, paymentMethod: "โอนเงินผ่านธนาคาร" },
-    { id: "3", receiptNo: "RC-000003", date: "2026-05-20T11:00:00", patientName: "จีรารัตน์ ธรรมวงศ์", patientHn: "RK-122094225", items: [{ id: "3", code: "P-003", name: "น้ำยาบ้วนปาก 500ml", price: 120, qty: 3, discount: 0 }, { id: "4", code: "P-004", name: "ไหมขัดฟัน เคลือบแว็กซ์", price: 60, qty: 2, discount: 0 }], total: 480, paymentMethod: "บัตรเครดิต" },
+    { id: "1", receiptNo: "RC-000001", date: "2026-05-20T09:30:00", patientName: "สิทธิชัย โสภา", patientHn: "RK-122094223", items: [{ id: "1", code: "P-001", name: "ยาสีฟัน สูตรเซนซิทีฟ", price: 150, qty: 2, discount: 0 }], total: 300, paymentMethod: "เงินสด", cashReceived: "500", discount: 0 },
+    { id: "2", receiptNo: "RC-000002", date: "2026-05-20T10:15:00", patientName: "พรรษา ธาดาวรวงศ์", patientHn: "RK-122094224", items: [{ id: "2", code: "SET001", name: "ชุดอุปกรณ์ทำความสะอาดหลังรักษาโรคเหงือก", price: 1000, qty: 1, discount: 0 }], total: 1000, paymentMethod: "โอนเงินผ่านธนาคาร", cashReceived: "0", discount: 0 },
+    { id: "3", receiptNo: "RC-000003", date: "2026-05-20T11:00:00", patientName: "จีรารัตน์ ธรรมวงศ์", patientHn: "RK-122094225", items: [{ id: "3", code: "P-003", name: "น้ำยาบ้วนปาก 500ml", price: 120, qty: 3, discount: 0 }, { id: "4", code: "P-004", name: "ไหมขัดฟัน เคลือบแว็กซ์", price: 60, qty: 2, discount: 0 }], total: 480, paymentMethod: "เงินสด", cashReceived: "500", discount: 0 },
   ]);
   const [historySearch, setHistorySearch] = useState("");
 
@@ -45,6 +45,10 @@ export default function SalesPage() {
   const [toastType, setToastType] = useState<"success" | "edit" | "delete" | "treatment" | "sky" | "purple">("success");
   const [toastVisible, setToastVisible] = useState(false);
   const showToast = useCallback((msg: string, type: "success" | "edit" | "delete" | "treatment" | "sky" | "purple") => { setToastMsg(msg); setToastType(type); setToastVisible(true); }, []);
+
+  // View Payment Modal
+  const [viewPaymentOpen, setViewPaymentOpen] = useState(false);
+  const [viewPaymentRecord, setViewPaymentRecord] = useState<SaleRecord | null>(null);
 
   // Confirm
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -86,6 +90,8 @@ export default function SalesPage() {
       items: [...cart],
       total,
       paymentMethod: methodLabel,
+      cashReceived: cash,
+      discount,
     };
 
     setSalesHistory(prev => [newSale, ...prev]);
@@ -101,6 +107,18 @@ export default function SalesPage() {
     setReceiptData(null);
     setCart([]);
     setSelectedPatient(null);
+  };
+
+  const handleViewPayment = (record: SaleRecord) => {
+    setViewPaymentRecord(record);
+    setViewPaymentOpen(true);
+  };
+
+  const handleHistoryPrintReceipt = (record: SaleRecord) => {
+    const method = record.paymentMethod === "เงินสด" ? "cash" : record.paymentMethod === "โอนเงินผ่านธนาคาร" ? "transfer" : record.paymentMethod === "บัตรเครดิต" ? "credit" : "deposit";
+    setReceiptData({ items: record.items, total: record.total, discount: record.discount, method, cash: record.cashReceived });
+    setSelectedPatient(null);
+    setReceiptOpen(true);
   };
 
   const filteredHistory = useMemo(() => salesHistory.filter(s =>
@@ -242,10 +260,10 @@ export default function SalesPage() {
                     <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">เลขที่ใบเสร็จ</th>
                     <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">วันเวลา</th>
                     <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ชื่อลูกค้า</th>
-                    <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">HN</th>
                     <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">รายการ</th>
                     <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider text-right">ยอดรวม</th>
-                    <th className="px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">ช่องทาง</th>
+                    <th className="w-36 px-5 py-3.5 text-xs font-semibold text-[#475569] uppercase tracking-wider">สถานะ</th>
+                    <th className="w-32 px-5 py-3.5 text-center text-xs font-semibold text-[#475569] uppercase tracking-wider">จัดการ</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#F1F5F9]">
@@ -253,14 +271,37 @@ export default function SalesPage() {
                     <tr key={s.id} className="hover:bg-[#F8FAFC] transition-colors">
                       <td className="px-5 py-4 text-sm font-medium text-[#1E293B]">{s.receiptNo}</td>
                       <td className="px-5 py-4 text-sm text-[#475569]">{new Date(s.date).toLocaleDateString("th-TH")} {new Date(s.date).toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" })}</td>
-                      <td className="px-5 py-4 text-sm font-medium text-[#1E293B]">{s.patientName}</td>
-                      <td className="px-5 py-4 text-sm text-[#64748B]">{s.patientHn}</td>
+                      <td className="px-5 py-4">
+                        <div className="font-medium text-[#1E293B]">{s.patientName}</div>
+                        <div className="text-xs text-[#94A3B8]">{s.patientHn}</div>
+                      </td>
                       <td className="px-5 py-4 text-sm text-[#64748B]">{s.items.length} รายการ</td>
                       <td className="px-5 py-4 text-sm font-bold text-[#1E40AF] text-right">฿{fmt(s.total)}</td>
-                      <td className="px-5 py-4"><span className="px-2.5 py-1 text-xs font-semibold bg-green-50 text-green-600 border border-green-200 rounded-full">{s.paymentMethod}</span></td>
+                      <td className="px-5 py-4">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-green-50 text-green-600 border border-green-200">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                          สำเร็จ
+                        </span>
+                      </td>
+                      <td className="px-5 py-4 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleViewPayment(s)}
+                            className="px-3 py-1.5 bg-white border border-[#E2E8F0] text-[#64748B] text-xs font-semibold rounded-lg shadow-sm hover:bg-[#F1F5F9] transition-colors whitespace-nowrap"
+                          >
+                            วิธีชำระเงิน
+                          </button>
+                          <button
+                            onClick={() => handleHistoryPrintReceipt(s)}
+                            className="px-3 py-1.5 bg-[#1E40AF] text-white text-xs font-semibold rounded-lg shadow-sm hover:bg-[#1E3A8A] transition-colors whitespace-nowrap"
+                          >
+                            ปริ้นใบเสร็จ
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   )) : (
-                    <tr><td colSpan={7} className="px-5 py-16 text-center text-[#94A3B8]">ไม่มีประวัติการขาย</td></tr>
+                    <tr><td colSpan={8} className="px-5 py-16 text-center text-[#94A3B8]">ไม่มีประวัติการขาย</td></tr>
                   )}
                 </tbody>
               </table>
@@ -273,6 +314,53 @@ export default function SalesPage() {
       <PatientSelectModal isOpen={patientModalOpen} patients={mockPatients} onSelect={p => { setSelectedPatient(p); setPatientModalOpen(false); }} onClose={() => setPatientModalOpen(false)} />
       <PaymentModal isOpen={paymentModalOpen} patient={selectedPatient} items={cart} onClose={() => setPaymentModalOpen(false)} onConfirm={handlePaymentConfirm} onSelectPatient={() => setPatientModalOpen(true)} />
       {receiptData && <ReceiptModal isOpen={receiptOpen} patient={selectedPatient} items={receiptData.items} total={receiptData.total} discount={receiptData.discount} method={receiptData.method} cashReceived={receiptData.cash} onClose={handleReceiptClose} />}
+      {/* View Payment Detail Modal */}
+      {viewPaymentOpen && viewPaymentRecord && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl w-[400px] shadow-2xl flex flex-col overflow-hidden" style={{ animation: "modal-pop 0.3s ease-out" }}>
+            <div className="p-5 border-b border-[#E2E8F0] flex justify-between items-center bg-[#F8FAFC]">
+              <h3 className="text-lg font-bold text-[#1E293B]">รายละเอียดการชำระเงิน</h3>
+              <button onClick={() => setViewPaymentOpen(false)} className="text-[#94A3B8] hover:text-[#1E293B]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
+                <span className="text-[#64748B]">ช่องทางการชำระ</span>
+                <span className="font-bold text-[#1E40AF]">{viewPaymentRecord.paymentMethod}</span>
+              </div>
+              <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
+                <span className="text-[#64748B]">จำนวนรายการ</span>
+                <span className="font-semibold text-[#1E293B]">{viewPaymentRecord.items.length} รายการ</span>
+              </div>
+              <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
+                <span className="text-[#64748B]">ยอดชำระสุทธิ</span>
+                <span className="font-bold text-[#1E293B]">฿{fmt(viewPaymentRecord.total)}</span>
+              </div>
+              {viewPaymentRecord.paymentMethod === "เงินสด" && (
+                <>
+                  <div className="flex justify-between items-center pb-3 border-b border-[#E2E8F0]">
+                    <span className="text-[#64748B]">รับเงินมา</span>
+                    <span className="font-semibold text-[#1E293B]">฿{fmt(Number(viewPaymentRecord.cashReceived))}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#64748B]">เงินทอน</span>
+                    <span className="font-semibold text-[#10B981]">฿{fmt(Number(viewPaymentRecord.cashReceived) - viewPaymentRecord.total)}</span>
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="p-4 border-t border-[#E2E8F0] bg-[#F8FAFC]">
+              <button
+                onClick={() => setViewPaymentOpen(false)}
+                className="w-full py-2.5 bg-white border border-[#E2E8F0] text-[#64748B] font-bold rounded-xl hover:bg-[#F1F5F9] transition-colors"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <ConfirmDialog isOpen={confirmOpen} title={confirmCfg.title} message={confirmCfg.message} type={confirmCfg.type} confirmText={confirmCfg.confirmText} onConfirm={confirmCfg.onConfirm} onCancel={() => setConfirmOpen(false)} />
       <SuccessToast message={toastMsg} type={toastType} isVisible={toastVisible} onClose={() => setToastVisible(false)}
         onComplete={() => {

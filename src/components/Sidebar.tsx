@@ -166,7 +166,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
 
         {/* Logout */}
-        <div className="px-3 py-4 border-t border-white/5">
+        {/* <div className="px-3 py-4 border-t border-white/5">
           <Link
             href="/login"
             className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#94A3B8] hover:text-red-400 hover:bg-red-400/5 transition-all duration-200 group"
@@ -178,7 +178,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </svg>
             ออกจากระบบ
           </Link>
-        </div>
+        </div> */}
       </aside>
     </>
   );
