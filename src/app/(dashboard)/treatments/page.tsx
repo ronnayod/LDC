@@ -312,6 +312,7 @@ export default function TreatmentsPage() {
   // Success Popup State
   const [successPopupOpen, setSuccessPopupOpen] = useState(false);
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
+  const [pendingReceipt, setPendingReceipt] = useState(false);
   const [viewPaymentModalOpen, setViewPaymentModalOpen] = useState(false);
   const [viewPaymentRecord, setViewPaymentRecord] = useState<TreatmentRecord | null>(null);
 
@@ -427,13 +428,24 @@ export default function TreatmentsPage() {
 
   const handleConfirmPayment = () => {
     if (!selectedRecord) return;
-    // Update record status to สำเร็จ
-    setTreatments(prev => prev.map(t => t.id === selectedRecord.id ? { ...t, status: "สำเร็จ", items: billItems } : t));
+    // Update record status to สำเร็จ and save payment detail
+    setTreatments(prev => prev.map(t => t.id === selectedRecord.id ? {
+      ...t,
+      status: "สำเร็จ",
+      items: billItems,
+      paymentDetail: {
+        method: paymentMethod,
+        cashReceived,
+        discountPrivilege,
+        billTotal,
+        finalTotal,
+      }
+    } : t));
     setPaymentModalOpen(false);
     setQrModalOpen(false);
 
-    // แสดงใบเสร็จรับเงิน
-    setReceiptModalOpen(true);
+    // แสดง toast ก่อน แล้วค่อยเปิดใบเสร็จหลัง toast หายไป
+    setPendingReceipt(true);
     showToast("ชำระเงินเรียบร้อย", "purple");
   };
 
@@ -1205,6 +1217,12 @@ export default function TreatmentsPage() {
         type={toastType}
         isVisible={toastVisible}
         onClose={() => setToastVisible(false)}
+        onComplete={() => {
+          if (pendingReceipt) {
+            setPendingReceipt(false);
+            setReceiptModalOpen(true);
+          }
+        }}
       />
     </>
   );

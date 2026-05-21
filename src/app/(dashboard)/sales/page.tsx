@@ -30,6 +30,7 @@ export default function SalesPage() {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [receiptData, setReceiptData] = useState<{ items: CartItem[]; total: number; discount: number; method: string; cash: string } | null>(null);
+  const [pendingReceiptData, setPendingReceiptData] = useState<{ items: CartItem[]; total: number; discount: number; method: string; cash: string } | null>(null);
 
   // History
   const [salesHistory, setSalesHistory] = useState<SaleRecord[]>([
@@ -89,8 +90,9 @@ export default function SalesPage() {
 
     setSalesHistory(prev => [newSale, ...prev]);
     setPaymentModalOpen(false);
-    setReceiptData({ items: [...cart], total, discount, method, cash });
-    setReceiptOpen(true);
+
+    // เก็บ receipt data ไว้ใน pending และแสดง toast ก่อน
+    setPendingReceiptData({ items: [...cart], total, discount, method, cash });
     showToast("ชำระเงินเรียบร้อย", "purple");
   };
 
@@ -272,7 +274,15 @@ export default function SalesPage() {
       <PaymentModal isOpen={paymentModalOpen} patient={selectedPatient} items={cart} onClose={() => setPaymentModalOpen(false)} onConfirm={handlePaymentConfirm} onSelectPatient={() => setPatientModalOpen(true)} />
       {receiptData && <ReceiptModal isOpen={receiptOpen} patient={selectedPatient} items={receiptData.items} total={receiptData.total} discount={receiptData.discount} method={receiptData.method} cashReceived={receiptData.cash} onClose={handleReceiptClose} />}
       <ConfirmDialog isOpen={confirmOpen} title={confirmCfg.title} message={confirmCfg.message} type={confirmCfg.type} confirmText={confirmCfg.confirmText} onConfirm={confirmCfg.onConfirm} onCancel={() => setConfirmOpen(false)} />
-      <SuccessToast message={toastMsg} type={toastType} isVisible={toastVisible} onClose={() => setToastVisible(false)} />
+      <SuccessToast message={toastMsg} type={toastType} isVisible={toastVisible} onClose={() => setToastVisible(false)}
+        onComplete={() => {
+          if (pendingReceiptData) {
+            setReceiptData(pendingReceiptData);
+            setPendingReceiptData(null);
+            setReceiptOpen(true);
+          }
+        }}
+      />
     </>
   );
 }

@@ -7,6 +7,7 @@ interface SuccessToastProps {
   type?: "success" | "edit" | "delete" | "treatment" | "sky" | "purple";
   isVisible: boolean;
   onClose: () => void;
+  onComplete?: () => void;
   duration?: number;
 }
 
@@ -15,6 +16,7 @@ export default function SuccessToast({
   type = "success",
   isVisible,
   onClose,
+  onComplete,
   duration = 2500,
 }: SuccessToastProps) {
   const [show, setShow] = useState(false);
@@ -29,6 +31,7 @@ export default function SuccessToast({
         setTimeout(() => {
           setShow(false);
           onClose();
+          onComplete?.();
         }, 400);
       }, duration);
       return () => clearTimeout(timer);
