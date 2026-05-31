@@ -125,7 +125,8 @@ export default function PatientsPage() {
   // ─── State ────────────────────────────────────────────
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
-    setIsMounted(true);
+    const t = setTimeout(() => setIsMounted(true), 0);
+    return () => clearTimeout(t);
   }, []);
 
   const [patients, setPatients] = useState<Patient[]>(initialPatients);
@@ -196,13 +197,13 @@ export default function PatientsPage() {
     "ผู้สูงอายุ": "bg-purple-100 text-purple-700",
   };
 
-  const nextHn = () => {
+  const nextHn = useCallback(() => {
     const maxNum = patients.reduce((max, p) => {
       const n = parseInt(p.hn.replace("HN-", ""), 10);
       return n > max ? n : max;
     }, 0);
     return `HN-${String(maxNum + 1).padStart(4, "0")}`;
-  };
+  }, [patients]);
 
   // ─── Open Modals ──────────────────────────────────────
   const openAdd = () => {
@@ -314,7 +315,7 @@ export default function PatientsPage() {
       setSelectedPatient(null);
       showToast(isAdd ? "เพิ่มข้อมูลเรียบร้อย" : "แก้ไขข้อมูลเรียบร้อย", isAdd ? "success" : "edit");
     }, 800);
-  }, [modalMode, formData, selectedPatient, showToast]);
+  }, [modalMode, formData, selectedPatient, showToast, nextHn]);
 
   const handleSave = () => {
     if (!validateForm()) return;

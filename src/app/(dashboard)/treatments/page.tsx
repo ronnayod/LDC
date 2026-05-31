@@ -12,7 +12,7 @@ interface TreatmentRecord {
   patientName: string;
   patientHn: string;
   phone: string;
-  type: "ทั่วไป" | "VIP";
+  type: string;
   coverage: string; // สิทธิการรักษา
   dentist: string;
   status: "นัดหมายวันนี้" | "รอคิว" | "กำลังรักษา" | "รอชำระเงิน" | "สำเร็จ";
@@ -43,6 +43,24 @@ interface ProductInfo {
   stock: number;
   unit: string;
 }
+
+// ─── Constants ─────────────────────────────────────────
+const DENTIST_OPTIONS = [
+  "ทพญ. แพรวพรรณ สุขใจ",
+  "ทพ. ศรัณย์ มาทำนา",
+  "ทพญ. ดุจเดือน แขไข",
+  "ทพ. อนันต์ ดีเลิศ",
+  "ทพญ. แดนสนรยา มาทำนา",
+];
+
+const COVERAGE_OPTIONS = [
+  "ชำระเงินเอง",
+  "ประกันสังคม",
+  "ประกันสุขภาพส่วนบุคคล",
+  "เงินสด",
+];
+
+const TYPE_OPTIONS = ["VIP", "ทั่วไป", "นักเรียน", "ผู้สูงอายุ"];
 
 // ─── Mock Data ─────────────────────────────────────────
 const mockProducts: ProductInfo[] = [
@@ -326,6 +344,17 @@ export default function TreatmentsPage() {
     setToastVisible(true);
   }, []);
 
+  // Create Queue Modal State
+  const [createQueueModalOpen, setCreateQueueModalOpen] = useState(false);
+  const [newQueueForm, setNewQueueForm] = useState({
+    patientName: "",
+    patientHn: "",
+    phone: "",
+    type: "ทั่วไป",
+    coverage: "ชำระเงินเอง",
+    dentist: DENTIST_OPTIONS[0],
+  });
+
   // Confirm dialog
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState<{ title: string; message: string; type: "edit" | "delete" | "success" | "treatment" | "sky" | "purple"; confirmText: string; onConfirm: () => void }>({ title: "", message: "", type: "edit", confirmText: "ยืนยัน", onConfirm: () => { } });
@@ -509,6 +538,47 @@ export default function TreatmentsPage() {
     setConfirmOpen(true);
   };
 
+  // ─── Create Queue Handler ─────────────────────────────
+  const handleOpenCreateQueue = () => {
+    setNewQueueForm({
+      patientName: "",
+      patientHn: "",
+      phone: "",
+      type: "ทั่วไป",
+      coverage: "ชำระเงินเอง",
+      dentist: DENTIST_OPTIONS[0],
+    });
+    setCreateQueueModalOpen(true);
+  };
+
+  const handleCreateQueue = () => {
+    if (!newQueueForm.patientName.trim() || !newQueueForm.patientHn.trim()) return;
+
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const nextId = String(Date.now());
+    const seqNum = String(treatments.length + 1).padStart(3, '0');
+
+    const newRecord: TreatmentRecord = {
+      id: nextId,
+      treatmentCode: `TR-${dateStr}-${seqNum}`,
+      date: now.toISOString(),
+      patientName: newQueueForm.patientName.trim(),
+      patientHn: newQueueForm.patientHn.trim(),
+      phone: newQueueForm.phone.trim() || "-",
+      type: newQueueForm.type,
+      coverage: newQueueForm.coverage,
+      dentist: newQueueForm.dentist,
+      status: "รอคิว",
+      items: [],
+    };
+
+    setTreatments(prev => [newRecord, ...prev]);
+    setCreateQueueModalOpen(false);
+    setActiveTab("รอคิว");
+    showToast("สร้างรอคิวเรียบร้อยแล้ว", "success");
+  };
+
   // Utility 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('th-TH', { style: 'decimal', minimumFractionDigits: 2 }).format(amount);
@@ -525,6 +595,16 @@ export default function TreatmentsPage() {
             <h2 className="text-xl sm:text-2xl font-bold text-[#1E293B]">จัดการรักษา</h2>
             <p className="text-xs sm:text-sm text-[#64748B] mt-0.5">ระบบจัดการสถานะการรักษา การขายสินค้า และชำระเงิน</p>
           </div>
+          <button
+            onClick={handleOpenCreateQueue}
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#00C6FF] to-[#0072FF] text-white font-semibold text-sm shadow-lg shadow-[#0072FF]/20 hover:shadow-xl hover:brightness-110 active:scale-[0.98] transition-all duration-200 w-full sm:w-auto"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            สร้างรอคิว
+          </button>
         </div>
 
         {/* ═══ Tabs ═══ */}
@@ -1201,6 +1281,146 @@ export default function TreatmentsPage() {
           </div>
         </div>
       )}
+      {/* ═══════════════════════════════════════════════════════════════
+           CREATE QUEUE MODAL
+         ═══════════════════════════════════════════════════════════════ */}
+      {createQueueModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 animate-fade-in">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setCreateQueueModalOpen(false)}></div>
+
+          {/* Modal */}
+          <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden" style={{ animation: "modal-pop 0.3s ease-out" }}>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 bg-[#1E40AF] text-white">
+              <div className="flex items-center gap-3">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                  <circle cx="8.5" cy="7" r="4" />
+                  <line x1="20" y1="8" x2="20" y2="14" />
+                  <line x1="23" y1="11" x2="17" y2="11" />
+                </svg>
+                <h3 className="text-xl font-bold">สร้างรอคิว</h3>
+              </div>
+              <button onClick={() => setCreateQueueModalOpen(false)} className="p-1 hover:bg-white/20 rounded-lg transition-colors">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
+
+              {/* Patient Name */}
+              <div>
+                <label className="block text-sm font-semibold text-[#1E293B] mb-1.5">
+                  ชื่อ-นามสกุล <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={newQueueForm.patientName}
+                  onChange={(e) => setNewQueueForm(prev => ({ ...prev, patientName: e.target.value }))}
+                  placeholder="กรอกชื่อ-นามสกุลคนไข้"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50 focus:border-[#3B82F6] transition-all"
+                />
+              </div>
+
+              {/* HN + Phone */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-[#1E293B] mb-1.5">
+                    HN <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newQueueForm.patientHn}
+                    onChange={(e) => setNewQueueForm(prev => ({ ...prev, patientHn: e.target.value }))}
+                    placeholder="เช่น HN-0016"
+                    className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50 focus:border-[#3B82F6] transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-[#1E293B] mb-1.5">เบอร์โทรศัพท์</label>
+                  <input
+                    type="text"
+                    value={newQueueForm.phone}
+                    onChange={(e) => setNewQueueForm(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="เช่น 081-234-5678"
+                    className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50 focus:border-[#3B82F6] transition-all"
+                  />
+                </div>
+              </div>
+
+              {/* Type */}
+              <div>
+                <label className="block text-sm font-semibold text-[#1E293B] mb-1.5">ประเภทคนไข้</label>
+                <select
+                  value={newQueueForm.type}
+                  onChange={(e) => setNewQueueForm(prev => ({ ...prev, type: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50 focus:border-[#3B82F6] transition-all bg-white appearance-none"
+                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394A3B8%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
+                >
+                  {TYPE_OPTIONS.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Coverage */}
+              <div>
+                <label className="block text-sm font-semibold text-[#1E293B] mb-1.5">สิทธิการรักษา</label>
+                <select
+                  value={newQueueForm.coverage}
+                  onChange={(e) => setNewQueueForm(prev => ({ ...prev, coverage: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50 focus:border-[#3B82F6] transition-all bg-white appearance-none"
+                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394A3B8%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
+                >
+                  {COVERAGE_OPTIONS.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Dentist */}
+              <div>
+                <label className="block text-sm font-semibold text-[#1E293B] mb-1.5">ทันตแพทย์</label>
+                <select
+                  value={newQueueForm.dentist}
+                  onChange={(e) => setNewQueueForm(prev => ({ ...prev, dentist: e.target.value }))}
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-sm focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50 focus:border-[#3B82F6] transition-all bg-white appearance-none"
+                  style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%2394A3B8%27 stroke-width=%272%27%3E%3Cpolyline points=%276 9 12 15 18 9%27/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
+                >
+                  {DENTIST_OPTIONS.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              </div>
+
+            </div>
+
+            {/* Footer Actions */}
+            <div className="p-6 border-t border-[#E2E8F0] bg-[#F8FAFC] flex gap-3">
+              <button
+                onClick={handleCreateQueue}
+                disabled={!newQueueForm.patientName.trim() || !newQueueForm.patientHn.trim()}
+                className="flex-1 py-3 rounded-xl bg-[#1E40AF] text-white font-bold hover:bg-[#1E3A8A] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#1E40AF]/20 flex items-center justify-center gap-2"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                สร้างรอคิว
+              </button>
+              <button
+                onClick={() => setCreateQueueModalOpen(false)}
+                className="flex-1 py-3 rounded-xl border border-[#E2E8F0] text-[#64748B] font-semibold hover:bg-[#F1F5F9] transition-colors"
+              >
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ═══ Confirm Dialog ═══ */}
       <ConfirmDialog
         isOpen={confirmOpen}
