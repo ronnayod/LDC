@@ -8,8 +8,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Lunithic Mockup — ระบบจัดการคลินิกทันตกรรม",
-  description: "ระบบ CRM สำหรับจัดการคลินิกทันตกรรม Lunithic Mockup  — จัดการคนไข้ นัดหมาย รักษา บัญชี และอื่นๆ",
+  title: "Lunithic Management — ระบบจัดการคลินิก",
+  description: "ระบบ CRM สำหรับจัดการคลินิก Lunithic Management  — จัดการคนไข้ นัดหมาย รักษา บัญชี และอื่นๆ",
   viewport: {
     width: "device-width",
     initialScale: 1,

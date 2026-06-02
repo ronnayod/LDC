@@ -1,6 +1,6 @@
-# 🦷 Lunithic Mockup — ระบบจัดการคลินิกทันตกรรม
+# 🦷lunithic management — ระบบจัดการคลินิก
 
-ระบบ CRM สำหรับจัดการคลินิกทันตกรรม Lunithic Mockup  — จัดการคนไข้ นัดหมาย รักษา บัญชี และอื่นๆ
+ระบบ CRM สำหรับจัดการคลินิกlunithic management  — จัดการคนไข้ นัดหมาย รักษา บัญชี และอื่นๆ
 
 ---
 
@@ -44,7 +44,7 @@
 
 ```bash
 git clone <repository-url>
-cd ldc
+cd lunithic management
 ```
 
 ### 2. ติดตั้ง Dependencies ทั้งหมด
@@ -125,7 +125,7 @@ npx -y create-next-app@latest ./ --typescript --tailwind --eslint --app --src-di
 ## 📁 โครงสร้างโปรเจค
 
 ```
-ldc/
+lunithic management/
 ├── public/                     # Static assets (SVG icons, favicon)
 │   ├── file.svg
 │   ├── globe.svg

@@ -1141,7 +1141,7 @@ export default function TreatmentsPage() {
             {/* ─── Printable Content ─── */}
             <div id="receipt-content" className="p-8 flex-1 overflow-y-auto text-[#1E293B]">
               <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-[#1E40AF]">Lunithic Mockup</h2>
+                <h2 className="text-2xl font-bold text-[#1E40AF]">Lunithic Management</h2>
                 <p className="text-sm text-[#64748B] mt-1">สาขาสำนักงานใหญ่ (Mockup)</p>
                 <p className="text-sm text-[#64748B]">โทร: 02-123-4567</p>
                 <div className="mt-4 text-lg font-bold">ใบเสร็จรับเงิน / ใบกำกับภาษีอย่างย่อ</div>

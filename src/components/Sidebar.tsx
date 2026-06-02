@@ -119,7 +119,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-white font-bold text-lg leading-tight">Lunithic Mockup</h1>
+              <h1 className="text-white font-bold text-lg leading-tight">Lunithic Management</h1>
               <p className="text-[#64748B] text-xs">Management System</p>
             </div>
             {/* Close button — mobile only */}

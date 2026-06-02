@@ -995,7 +995,7 @@ export default function PatientsPage() {
                   <line x1="12" y1="8" x2="12.01" y2="8" />
                 </svg>
               }>
-                <FormField label="ทราบข่าว LDC จาก">
+                <FormField label="ทราบข่าว Lunithic จาก">
                   <select value={formData.referralSource} onChange={(e) => updateField("referralSource", e.target.value)} className={inputClass()}>
                     {referralSources.map((s) => (
                       <option key={s} value={s}>{s || "-- เลือก --"}</option>
