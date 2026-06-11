@@ -214,6 +214,209 @@ import nextTs from "eslint-config-next/typescript";
 
 ---
 
+## 🔀 คำสั่ง Git ที่ใช้บ่อย
+
+### พื้นฐาน — Add / Commit / Push / Pull
+
+```bash
+# ดูสถานะไฟล์ (มีอะไรเปลี่ยนบ้าง)
+git status
+
+# เพิ่มไฟล์ทั้งหมดเข้า staging
+git add .
+
+# เพิ่มเฉพาะไฟล์ที่ต้องการ
+git add src/app/page.tsx
+
+# Commit พร้อมข้อความ
+git commit -m "feat: เพิ่มหน้า dashboard"
+
+# Push ขึ้น remote (origin) branch main
+git push origin main
+
+# Pull ดึงโค้ดล่าสุดจาก remote
+git pull origin main
+
+# Push ครั้งแรก (ตั้ง upstream)
+git push -u origin main
+```
+
+### Branch — สร้าง / สลับ / ลบ
+
+```bash
+# ดู branch ทั้งหมด
+git branch
+
+# ดู branch ทั้งหมด (รวม remote)
+git branch -a
+
+# สร้าง branch ใหม่
+git branch feature/new-page
+
+# สลับไป branch อื่น
+git checkout feature/new-page
+
+# สร้าง + สลับไป branch ใหม่ (ทางลัด)
+git checkout -b feature/new-page
+
+# ลบ branch ที่ merge แล้ว
+git branch -d feature/new-page
+
+# ลบ branch แบบบังคับ (ยังไม่ merge)
+git branch -D feature/new-page
+```
+
+### Merge / Rebase
+
+```bash
+# Merge branch เข้า main
+git checkout main
+git merge feature/new-page
+
+# Rebase (เรียง commit ใหม่ให้เป็นเส้นตรง)
+git checkout feature/new-page
+git rebase main
+
+# ยกเลิก merge ที่มี conflict
+git merge --abort
+
+# ยกเลิก rebase ที่มี conflict
+git rebase --abort
+```
+
+### ย้อนกลับ / แก้ไข
+
+```bash
+# แก้ไข commit ล่าสุด (เปลี่ยนข้อความ)
+git commit --amend -m "fix: แก้ข้อความ commit"
+
+# เพิ่มไฟล์เข้า commit ล่าสุด (ไม่เปลี่ยนข้อความ)
+git add .
+git commit --amend --no-edit
+
+# ยกเลิกการ add (unstage)
+git reset HEAD src/app/page.tsx
+
+# ย้อนไฟล์กลับเป็นเหมือน commit ล่าสุด (⚠️ ข้อมูลหาย)
+git checkout -- src/app/page.tsx
+
+# ย้อน commit ล่าสุด (เก็บไฟล์ไว้ใน staging)
+git reset --soft HEAD~1
+
+# ย้อน commit ล่าสุด (เก็บไฟล์ไว้แต่ unstage)
+git reset --mixed HEAD~1
+
+# ย้อน commit ล่าสุด (⚠️ ลบทุกอย่าง)
+git reset --hard HEAD~1
+
+# สร้าง commit ใหม่ที่ย้อนการเปลี่ยนแปลง (ปลอดภัย)
+git revert HEAD
+```
+
+### Stash — เก็บงานชั่วคราว
+
+```bash
+# เก็บงานที่ยังไม่เสร็จไว้ชั่วคราว
+git stash
+
+# เก็บพร้อมตั้งชื่อ
+git stash save "กำลังทำหน้า login"
+
+# ดู stash ทั้งหมด
+git stash list
+
+# เอางานกลับมา (ลบ stash)
+git stash pop
+
+# เอางานกลับมา (เก็บ stash ไว้)
+git stash apply
+```
+
+### Log / ดูประวัติ
+
+```bash
+# ดูประวัติ commit
+git log
+
+# ดูแบบย่อ 1 บรรทัด
+git log --oneline
+
+# ดู 5 commit ล่าสุด
+git log --oneline -5
+
+# ดูประวัติแบบกราฟ
+git log --oneline --graph --all
+
+# ดูว่าไฟล์ถูกแก้อะไรบ้าง
+git diff
+
+# ดูความต่างของไฟล์ที่ add แล้ว
+git diff --staged
+```
+
+### Remote — จัดการ Repository
+
+```bash
+# ดู remote ทั้งหมด
+git remote -v
+
+# เพิ่ม remote ใหม่
+git remote add origin https://github.com/user/repo.git
+
+# เปลี่ยน URL ของ remote
+git remote set-url origin https://github.com/user/new-repo.git
+
+# ดึงข้อมูล remote (ไม่ merge)
+git fetch origin
+
+# ลบ branch บน remote
+git push origin --delete feature/old-branch
+```
+
+### Clone / Init
+
+```bash
+# Clone โปรเจคจาก GitHub
+git clone https://github.com/user/repo.git
+
+# Clone เฉพาะ branch
+git clone -b develop https://github.com/user/repo.git
+
+# สร้าง Git repo ใหม่ในโฟลเดอร์ปัจจุบัน
+git init
+```
+
+### 💡 ลำดับการทำงานปกติ (Workflow)
+
+```bash
+# 1. ดึงโค้ดล่าสุด
+git pull origin main
+
+# 2. สร้าง branch ใหม่
+git checkout -b feature/my-feature
+
+# 3. เขียนโค้ด...
+
+# 4. ดูสถานะ
+git status
+
+# 5. Add ไฟล์
+git add .
+
+# 6. Commit
+git commit -m "feat: เพิ่มฟีเจอร์ใหม่"
+
+# 7. Push ขึ้น remote
+git push origin feature/my-feature
+
+# 8. สร้าง Pull Request บน GitHub
+# 9. หลัง merge แล้ว กลับมา main
+git checkout main
+git pull origin main
+```
+
+---
+
 ## 📚 แหล่งข้อมูลเพิ่มเติม
 
 - [Next.js Documentation](https://nextjs.org/docs)
